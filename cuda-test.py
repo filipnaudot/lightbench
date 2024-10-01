@@ -6,7 +6,7 @@ def test_cuda():
         return False
     
 
-    print(f"(CUDA available) GPU Name: {torch.cuda.get_device_name(0)}")
+    print(f"\n(CUDA available) GPU Name: {torch.cuda.get_device_name(0)}\n\n")
     
     # Create two random tensors and move them to GPU
     tensor_a = torch.rand(3, 3).cuda()
@@ -19,7 +19,7 @@ def test_cuda():
     print(tensor_a)
     print("Matrix B:")
     print(tensor_b)
-    print("Result of Matrix Multiplication A * B on GPU:")
+    print("\nResult of Matrix Multiplication A * B on GPU:")
     print(result)
     
     return True
