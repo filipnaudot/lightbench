@@ -1,2 +1,2 @@
 # efficient-llm-benchmark
-Repository for paper: Efficient LLMs: A Study in Resource Minimization
+Repository for the paper: ***Efficient LLMs: A Study in Resource Minimization***
