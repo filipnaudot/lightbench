@@ -1,22 +1,30 @@
 import os
 from dotenv import load_dotenv
-load_dotenv()
 
 import torch
-from transformers import pipeline, AutoTokenizer
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
 
+QUANTIZE = False
 
+load_dotenv()
 hf_token = os.getenv("HUGGINGFACE_TOKEN")
 model_id = os.getenv("MODEL_NAME")
 tokenizer = AutoTokenizer.from_pretrained(model_id)
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
+model = model_id
+if QUANTIZE:
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id,
+        load_in_8bit=True,
+        device_map="auto"
+    )
 
 generator = pipeline(
     "text-generation",
-    model=model_id,
+    model=model,
     torch_dtype=torch.bfloat16,
     device_map="auto",
     pad_token_id=tokenizer.eos_token_id,
