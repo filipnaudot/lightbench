@@ -43,18 +43,23 @@ conversation_history = [
     }
 ]
 
+
 def main():
+    WHITE_TEXT = '\033[97m'
+    BACKGROUND_LIGHT_BLUE = '\033[104m'
+    BACKGROUND_GRAY = '\033[100m'
+    RESET = '\033[0m'
+    
     while True:
-        user_input = input("Enter: ")
+        user_input = input(f"{WHITE_TEXT + BACKGROUND_LIGHT_BLUE}You:{RESET} ")
         
         if user_input.lower() in ["exit", "quit"]:
             break
         
-        conversation_history.append(
-            {
-                "role": "user",
-                "content": user_input
-            })
+        conversation_history.append({
+            "role": "user",
+            "content": user_input
+        })
         
         start_time = time.time()
         generation = generator(
@@ -65,16 +70,16 @@ def main():
             max_new_tokens=256,
         )
         end_time = time.time()
-
+        
         response = generation[0]['generated_text'][-1]['content']
         
-        print(f"\n({end_time - start_time:.2f}) Bot: {response}\n\n")
+        print(f"\n({end_time - start_time:.2f}) {WHITE_TEXT + BACKGROUND_GRAY}Bot:{RESET} {response}\n")
         
-        conversation_history.append(
-            {
-                "role": "assistant", 
-                "content": response
-            })
+        conversation_history.append({
+            "role": "assistant", 
+            "content": response
+        })
+
 
 if __name__ == "__main__":
     main()
