@@ -3,7 +3,7 @@ import time
 from dotenv import load_dotenv
 
 import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 
 
@@ -17,16 +17,19 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 model = model_id
 if QUANTIZE:
+    bnb_config = BitsAndBytesConfig(load_in_8bit=True)
+
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
-        load_in_8bit=True,
+        quantization_config=bnb_config,
         device_map="auto",
-        token=hf_token,
+        torch_dtype=torch.bfloat16,
     )
 
 generator = pipeline(
     "text-generation",
     model=model,
+    tokenizer=tokenizer,
     torch_dtype=torch.bfloat16,
     device_map="auto",
     pad_token_id=tokenizer.eos_token_id,
