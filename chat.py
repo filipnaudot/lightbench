@@ -1,4 +1,5 @@
 import os
+import time
 from dotenv import load_dotenv
 
 import torch
@@ -24,7 +25,7 @@ if QUANTIZE:
     )
 
 generator = pipeline(
-    # "text-generation",
+    "text-generation",
     model=model,
     torch_dtype=torch.bfloat16,
     device_map="auto",
@@ -52,6 +53,7 @@ def main():
                 "content": user_input
             })
         
+        start_time = time.time()
         generation = generator(
             conversation_history,
             do_sample=False,
@@ -59,10 +61,11 @@ def main():
             top_p=1,
             max_new_tokens=256,
         )
-        
+        end_time = time.time()
+
         response = generation[0]['generated_text'][-1]['content']
         
-        print(f"\nBot: {response}\n\n")
+        print(f"\n({end_time - start_time:.2f}) Bot: {response}\n\n")
         
         conversation_history.append(
             {
