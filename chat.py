@@ -23,7 +23,7 @@ if QUANTIZE:
     )
 
 generator = pipeline(
-    "text-generation",
+    # "text-generation",
     model=model,
     torch_dtype=torch.bfloat16,
     device_map="auto",
@@ -31,7 +31,10 @@ generator = pipeline(
 )
 
 conversation_history = [
-    {"role": "system", "content": "You are a helpful assistant, that responds as a pirate."}
+    {
+        "role": "system",
+        "content": "You are a helpful assistant, that responds as a pirate."
+    }
 ]
 
 def main():
@@ -41,21 +44,29 @@ def main():
         if user_input.lower() in ["exit", "quit"]:
             break
         
-        conversation_history.append({"role": "user", "content": user_input})
+        conversation_history.append(
+            {
+                "role": "user",
+                "content": user_input
+            })
         
         generation = generator(
             conversation_history,
             do_sample=False,
             temperature=1.0,
             top_p=1,
-            max_new_tokens=256
+            max_new_tokens=256,
         )
         
         response = generation[0]['generated_text'][-1]['content']
         
         print(f"\nBot: {response}\n\n")
         
-        conversation_history.append({"role": "assistant", "content": response})
+        conversation_history.append(
+            {
+                "role": "assistant", 
+                "content": response
+            })
 
 if __name__ == "__main__":
     main()
