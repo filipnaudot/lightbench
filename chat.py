@@ -35,15 +35,17 @@ def load_quantized_model(model_id):
 
     return model
 
+
 def print_stream_output(streamer, queue, start_time, ttft_list):
     first_token = True
-    for new_text in streamer:
+    for token in streamer:
         if first_token:
             ttft = time.time() - start_time
             ttft_list.append(ttft)
             first_token = False
-        print(new_text, end='', flush=True)
-        queue.put(new_text)
+        
+        print(f"{token}", end='', flush=True)
+        queue.put(token)
 
 
 def main(stream: bool = False, QUANTIZE: bool = False):
@@ -94,8 +96,9 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         
         ttft_list = []
         start_time = time.time()
-        streaming_thread = threading.Thread(target=print_stream_output, args=(streamer, queue, start_time, ttft_list))
-        streaming_thread.start()
+        if stream:
+            streaming_thread = threading.Thread(target=print_stream_output, args=(streamer, queue, start_time, ttft_list))
+            streaming_thread.start()
 
         generation = generator(
             conversation_history,
@@ -107,14 +110,16 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         )
         end_time = time.time()
 
-        streaming_thread.join()
+        if stream:
+            streaming_thread.join()
         
         response = generation[0]['generated_text'][-1]['content']
         
         if not stream:
             print(f"{response}")
         
-        print(f"\n\n({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)\n")
+        ttft = ttft_list[-1] if stream else 0
+        print(f"\n\n({end_time - start_time:.2f}s TTFT: {ttft:.2f}s)\n")
 
         conversation_history.append({
             "role": "assistant", 
