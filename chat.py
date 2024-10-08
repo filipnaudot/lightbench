@@ -104,4 +104,4 @@ def main(stream: bool = False, QUANTIZE: bool = False):
 
 
 if __name__ == "__main__":
-    main(stream=True, QUANTIZE=True)
+    main(stream=True, QUANTIZE=False)
