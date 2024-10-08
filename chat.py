@@ -14,7 +14,7 @@ RESET = '\033[0m'
 
 
 
-def load_env():
+def load_env_variables():
     load_dotenv()
     
     hf_token = os.getenv("HUGGINGFACE_TOKEN")
@@ -48,7 +48,7 @@ def print_stream_output(streamer, queue, start_time, ttft_list):
 
 def main(stream: bool = False, QUANTIZE: bool = False):
 
-    model_id, hf_token = load_env()
+    model_id, hf_token = load_env_variables()
     tokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
