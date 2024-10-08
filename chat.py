@@ -1,9 +1,11 @@
 import os
 import time
-from dotenv import load_dotenv
+from queue import Queue
+import threading
 
+from dotenv import load_dotenv
 import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextStreamer
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
 WHITE_TEXT = '\033[97m'
 BACKGROUND_LIGHT_BLUE = '\033[104m'
@@ -33,6 +35,16 @@ def load_quantized_model(model_id):
 
     return model
 
+def print_stream_output(streamer, queue, start_time, ttft_list):
+    first_token = True
+    for new_text in streamer:
+        if first_token:
+            ttft = time.time() - start_time
+            ttft_list.append(ttft)
+            first_token = False
+        print(new_text, end='', flush=True)
+        queue.put(new_text)
+
 
 def main(stream: bool = False, QUANTIZE: bool = False):
 
@@ -61,13 +73,14 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         }
     ]
     
-    streamer = TextStreamer(tokenizer, skip_prompt=True)
-    
+    streamer = TextIteratorStreamer(tokenizer, skip_prompt=True)
+    queue = Queue()
+
     #################
     ### Chat loop ###
     #################
     while True:
-        user_input = input(f"{WHITE_TEXT + BACKGROUND_LIGHT_BLUE}You:{RESET} ")
+        user_input = input(f"\n{WHITE_TEXT + BACKGROUND_LIGHT_BLUE}You:{RESET} ")
         
         if user_input.lower() in ["exit", "quit"]:
             break
@@ -79,7 +92,11 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         
         print(f"\n{WHITE_TEXT + BACKGROUND_GRAY}Bot:{RESET} ", end='')
         
+        ttft_list = []
         start_time = time.time()
+        streaming_thread = threading.Thread(target=print_stream_output, args=(streamer, queue, start_time, ttft_list))
+        streaming_thread.start()
+
         generation = generator(
             conversation_history,
             streamer=streamer if stream else None,
@@ -89,13 +106,15 @@ def main(stream: bool = False, QUANTIZE: bool = False):
             max_new_tokens=512,
         )
         end_time = time.time()
+
+        streaming_thread.join()
         
         response = generation[0]['generated_text'][-1]['content']
         
         if not stream:
             print(f"{response}")
         
-        print(f"\n({end_time - start_time:.2f}s)\n")
+        print(f"\n\n({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)\n")
 
         conversation_history.append({
             "role": "assistant", 
