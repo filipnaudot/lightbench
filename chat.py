@@ -24,7 +24,8 @@ def load_env_variables():
 
 
 def load_quantized_model(model_id):
-    bnb_config = BitsAndBytesConfig(load_in_8bit=True)
+    print("Loading quantized model...")
+    bnb_config = BitsAndBytesConfig(load_in_4bit=True)
 
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
