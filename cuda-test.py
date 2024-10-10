@@ -15,18 +15,13 @@ def test_cuda():
     # Set up CUDA event objects to record time
     start_event = torch.cuda.Event(enable_timing=True)
     end_event = torch.cuda.Event(enable_timing=True)
-    # Record start time
     start_event.record()
 
-    # Multiplication on the GPU
     print(f"matmul test on {tensor_size}x{tensor_size} matrix...")
     result = torch.matmul(tensor_a, tensor_b)
 
-    # Record end time
     end_event.record()
-    # Wait for everything to finish running
     torch.cuda.synchronize()
-    # Calculate the elapsed time
     elapsed_time_ms = start_event.elapsed_time(end_event)
 
     # print("Matrix A:")
