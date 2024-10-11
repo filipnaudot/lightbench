@@ -7,10 +7,7 @@ from dotenv import load_dotenv
 import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
-WHITE_TEXT = '\033[97m'
-BACKGROUND_LIGHT_BLUE = '\033[104m'
-BACKGROUND_GRAY = '\033[100m'
-RESET = '\033[0m'
+from utils import Colors
 
 
 
@@ -83,7 +80,7 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     ### Chat loop ###
     #################
     while True:
-        user_input = input(f"\n{WHITE_TEXT + BACKGROUND_LIGHT_BLUE}You:{RESET} ")
+        user_input = input(f"\n{Colors.WHITE_TEXT + Colors.BACKGROUND_LIGHT_BLUE}You:{Colors.RESET} ")
         
         if user_input.lower() in ["exit", "quit"]:
             break
@@ -93,7 +90,7 @@ def main(stream: bool = False, QUANTIZE: bool = False):
             "content": user_input
         })
         
-        print(f"\n{WHITE_TEXT + BACKGROUND_GRAY}Bot:{RESET} ", end='')
+        print(f"\n{Colors.WHITE_TEXT + Colors.BACKGROUND_GRAY}Bot:{Colors.RESET} ", end='')
         
         ttft_list = []
         start_time = time.time()
