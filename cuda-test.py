@@ -24,7 +24,6 @@ def test_cuda():
     torch.cuda.synchronize()
     elapsed_time_ms = start_event.elapsed_time(end_event)
 
-    # GIT test
     # print("Matrix A:")
     # print(tensor_a)
     # print("Matrix B:")
