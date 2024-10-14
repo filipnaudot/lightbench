@@ -88,7 +88,7 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     #################
     while True:
         user_input = input(f"\n{Colors.WHITE_TEXT + Colors.BACKGROUND_LIGHT_BLUE}You:{Colors.RESET} ")
-        
+        user_input = "Write a python function that calculates the n:th fibonacci number. The function should pass the following test: assert fib(2) == 1."
         if user_input.lower() in ["exit", "quit"]:
             break
         
@@ -122,8 +122,32 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         
 
         print(f"{response}")
-        print("\n\n--------- EXTRACTED CODE ---------\n")
-        print(preprocess_data(response))
+        extracted_code = preprocess_data(response).strip()
+
+        # Add the assertion statement properly without indenting it
+        test_code = "assert fib(2) == 1"
+
+        # Combine the extracted code with the test code, ensuring proper formatting
+        full_code_to_execute = f"{extracted_code}\n\n{test_code}"
+
+        print(full_code_to_execute)
+        print("Executing code...\n")
+        local_scope = {}
+        try:
+            # Execute the combined code
+            exec(full_code_to_execute, {}, local_scope)
+            # If no assertion error, the test passed
+            print("\n\n--------- TEST RESULT ---------\n")
+            print("The test passed successfully.")
+        except AssertionError:
+            # If there's an AssertionError, the test failed
+            print("\n\n--------- TEST RESULT ---------\n")
+            print("The test failed.")
+        except Exception as e:
+            # If there's any other exception, print it out
+            print("\n\n--------- TEST RESULT ---------\n")
+            print(f"An error occurred: {e}")
+            
         
         ttft = ttft_list[-1] if stream else 0
         print(f"\n\n({end_time - start_time:.2f}s TTFT: {ttft:.2f}s)\n")
