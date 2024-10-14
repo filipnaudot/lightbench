@@ -49,3 +49,20 @@ class CodeEvaluator:
             data = data[data.find(f"```python") + len(f"```python"):]
             data = data[:data.find("```")]
         return data
+    
+    
+    def execute_code(code, test):
+        full_code_to_execute = f"{code}\n\n{test}"
+        try:
+            exec(full_code_to_execute, {}, {})
+            print("\n\n--------- TEST RESULT ---------\n")
+            print("The test passed successfully.")
+            return 1, "SUCCESS"
+        except AssertionError:
+            print("\n\n--------- TEST RESULT ---------\n")
+            print("The test failed.")
+            return 0, f"TEST {str(test)} FAILED"
+        except Exception as error:
+            print("\n\n--------- TEST RESULT ---------\n")
+            print(f"An error occurred: {error}")
+            return 0, f"ERROR: {error}"
