@@ -93,7 +93,6 @@ class CodeEvaluator:
             streaming_thread = threading.Thread(target=self.handle_stream_output, args=(streamer, queue, start_time, ttft_list))
             streaming_thread.start()
 
-
             generation = self.generator(
                 prompt,
                 streamer=streamer,
@@ -113,4 +112,8 @@ class CodeEvaluator:
             
             print(f"({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
 
-            self.validate_code(extracted_code, test)
+            status, message = self.validate_code(extracted_code, test)
+
+            if status == 0:
+                # TODO: Implement few-shot
+                pass
