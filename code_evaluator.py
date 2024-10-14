@@ -1,6 +1,6 @@
 import os
 import time
-from queue import Queu
+from queue import Queue
 import threading
 
 import torch
@@ -50,7 +50,7 @@ class CodeEvaluator:
             data = data[:data.find("```")]
         return data
     
-    
+
     def execute_code(code, test):
         full_code_to_execute = f"{code}\n\n{test}"
         try:
