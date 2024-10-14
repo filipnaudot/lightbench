@@ -1,5 +1,6 @@
 import os
 import time
+import json
 
 from dotenv import load_dotenv
 import torch
@@ -24,24 +25,35 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     tokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     
+    with open('./data/mbpp/mbpp.jsonl', 'r') as json_file:
+        json_list = list(json_file)
+
     prompts = [
-            (({
+        ((
+            {
                 "role": "system",
-                "content": "You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including any imports if needed. Do not provide example usage, only the python function.",
+                "content": "You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including imports if needed. Do not provide example usage, only the python function.",
             },
             {
                 "role": "user",
                 "content": "Write a python function that calculates the n:th fibonacci number. The function should pass the following test: assert fib(2) == 1.",
-            }), "assert fib(2) == 1"),
-            (({
-                "role": "system",
-                "content": "You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including any imports if needed. Do not provide example usage, only the python function.",
-            },
-            {
-                "role": "user",
-                "content": "Write a python function that calculates the n:th fibonacci number. The function should pass the following test: assert fib(2) == 1.",
-            }), "assert fib(2) == 11111")
-        ]
+            }), "assert fib(2) == 1"
+        )
+    ]
+    for json_str in json_list:
+        result = json.loads(json_str)
+        promt = (
+            (
+                {
+                    "role": "system",
+                    "content": f"You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including any imports if needed. Do not provide example usage, only the python function.",
+                },
+                {
+                    "role": "user",
+                    "content": result["text"] + f' The function should pass the following test: {result["test_list"][0]}.',
+                }), result["test_list"][1]
+        )
+        prompts.append(promt)
     
     code_evaluator = CodeEvaluator(model_id=model_id, hf_token=hf_token)
     code_evaluator.generate_response(prompts)
