@@ -81,11 +81,12 @@ class CodeEvaluator:
             return 0, f"ERROR: {error}"
 
 
-    def generate_response(self, prompts):
+    def generate_response(self, prompts, attempts=0):
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
         queue = Queue()
 
         print("\n--------- TEST RESULT ---------\n")
+        print(f"--------------- {attempts} ---------------")
         for prompt, test in prompts:
             ttft_list = []
             start_time = time.time()
@@ -114,6 +115,21 @@ class CodeEvaluator:
 
             status, message = self.validate_code(extracted_code, test)
 
-            if status == 0:
-                # TODO: Implement few-shot
-                pass
+            if status == 0 and attempts < 3:
+                print("Trying again...")
+                
+                prompts = [(
+                    [
+                        *prompt,  # Unpacking the list
+                        {
+                            "role": "assistant",
+                            "content": response
+                        },
+                        {
+                            "role": "user",
+                            "content": f' While running that code I received the following: {message}',
+                        }
+                    ], test)
+                ]
+                self.generate_response(prompts, attempts+1)
+                

@@ -36,13 +36,13 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     for json_str in json_list:
         result = json.loads(json_str)
         promt = (
-            (
+            [
                 system_command,
                 {
                     "role": "user",
                     "content": result["text"] + f' The function should pass the following test: {result["test_list"][0]}.',
                 }
-            ), result["test_list"][1]
+            ], result["test_list"][1]
         )
         prompts.append(promt)
     
