@@ -28,30 +28,21 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     with open('./data/mbpp/mbpp.jsonl', 'r') as json_file:
         json_list = list(json_file)
 
-    prompts = [
-        ((
-            {
-                "role": "system",
-                "content": "You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including imports if needed. Do not provide example usage, only the python function.",
-            },
-            {
-                "role": "user",
-                "content": "Write a python function that calculates the n:th fibonacci number. The function should pass the following test: assert fib(2) == 1.",
-            }), "assert fib(2) == 1"
-        )
-    ]
+    system_command = {
+        "role": "system",
+        "content": "You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including imports if needed. Do not provide example usage, only the python function.",
+    }
+    prompts = []
     for json_str in json_list:
         result = json.loads(json_str)
         promt = (
             (
-                {
-                    "role": "system",
-                    "content": f"You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including any imports if needed. Do not provide example usage, only the python function.",
-                },
+                system_command,
                 {
                     "role": "user",
                     "content": result["text"] + f' The function should pass the following test: {result["test_list"][0]}.',
-                }), result["test_list"][1]
+                }
+            ), result["test_list"][1]
         )
         prompts.append(promt)
     
