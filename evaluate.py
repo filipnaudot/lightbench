@@ -25,8 +25,10 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     tokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     
+    start_test_line = 11
+    end_test_line = 510
     with open('./data/mbpp/mbpp.jsonl', 'r') as json_file:
-        json_list = list(json_file)
+        json_list = list(json_file)[start_test_line-1:end_test_line]
 
     system_command = {
         "role": "system",

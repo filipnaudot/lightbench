@@ -6,7 +6,7 @@ import threading
 import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
-from utils import print_green, print_red
+from utils import print_green, print_red, print_yellow
 
 class CodeEvaluator:
     def __init__(self, model_id, hf_token, quantize=False):
@@ -65,8 +65,9 @@ class CodeEvaluator:
         return data
 
 
-    def validate_code(self, code, test):
+    def validate_code(self, code, test, attempts):
         full_code_to_execute = f"{code}\n\n{test}"
+        print_yellow(f"{attempts}", end=' ')
         try:
             exec(full_code_to_execute, {}, {})
             print_green("PASSED")
@@ -85,9 +86,7 @@ class CodeEvaluator:
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
         queue = Queue()
 
-        print("\n--------- TEST RESULT ---------\n")
-        print(f"--------------- {attempts} ---------------")
-        for prompt, test in prompts:
+        for index, (prompt, test) in enumerate(prompts):
             ttft_list = []
             start_time = time.time()
 
@@ -111,13 +110,15 @@ class CodeEvaluator:
             
             extracted_code = self.preprocess_data(response).strip()
             
-            print(f"({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
+            if attempts == 0:
+                print(f"{index} ({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
 
-            status, message = self.validate_code(extracted_code, test)
-
-            if status == 0 and attempts < 3:
-                print("Trying again...")
+            else:
+                print(f"\t({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
                 
+            status, message = self.validate_code(extracted_code, test, attempts)
+
+            if status == 0 and attempts < 3:                
                 prompts = [(
                     [
                         *prompt,  # Unpacking the list
@@ -127,9 +128,8 @@ class CodeEvaluator:
                         },
                         {
                             "role": "user",
-                            "content": f' While running that code I received the following: {message}',
+                            "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
                         }
                     ], test)
                 ]
                 self.generate_response(prompts, attempts+1)
-                
