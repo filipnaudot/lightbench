@@ -42,7 +42,7 @@ class CodeEvaluator:
         bnb_config = BitsAndBytesConfig(load_in_4bit=True)
 
         model = AutoModelForCausalLM.from_pretrained(
-            self.model_id,
+            self.model,
             quantization_config=bnb_config,
             device_map="auto",
             torch_dtype=torch.bfloat16,
