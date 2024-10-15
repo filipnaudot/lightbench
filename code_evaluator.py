@@ -85,7 +85,7 @@ class CodeEvaluator:
         return data
 
 
-    def timeout_handler(signum, frame):
+    def timeout_handler(self, signum, frame):
         raise TimeoutError("Execution timed out!")
 
 
@@ -95,6 +95,7 @@ class CodeEvaluator:
         signal.signal(signal.SIGALRM, self.timeout_handler)
         signal.alarm(10)
         try:
+            time.sleep(20)
             exec(full_code_to_execute, globals())
         except AssertionError:
             Printer.print_red("FAILED: ", end='')
