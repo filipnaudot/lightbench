@@ -2,6 +2,7 @@ import os
 import time
 from queue import Queue
 import threading
+import signal
 
 import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
@@ -84,13 +85,17 @@ class CodeEvaluator:
         return data
 
 
+    def timeout_handler(signum, frame):
+        raise TimeoutError("Execution timed out!")
+
+
     def validate_code(self, code, test, shots):
         full_code_to_execute = f"{code}\n\n{test}"
         Printer.print_yellow(f" {shots}", end=' ')
+        signal.signal(signal.SIGALRM, self.timeout_handler)
+        signal.alarm(10)
         try:
             exec(full_code_to_execute, globals())
-            Printer.print_green("PASSED")
-            return 1, "PASSED"
         except AssertionError:
             Printer.print_red("FAILED: ", end='')
             print(f"test {str(test)} FAILED")
@@ -99,6 +104,15 @@ class CodeEvaluator:
             Printer.print_red("FAILED: ", end='')
             print(f"An error occurred: {error}")
             return 0, f"ERROR: {error}"
+        except TimeoutError as error:
+            Printer.print_red("FAILED: ", end='')
+            print(f"{error}")
+            return 0, f"FAILED: {error}"
+        finally:
+            signal.alarm(0)
+        
+        Printer.print_green("PASSED")
+        return 1, "PASSED"
 
 
     def run(self, prompts, few_shot=False):
@@ -113,26 +127,36 @@ class CodeEvaluator:
 
             if few_shot and not passed:
                 shots = 1
+                few_shot_prompt = [
+                    *prompt,  # Unpacking the list
+                    {
+                        "role": "assistant",
+                        "content": response
+                    },
+                    {
+                        "role": "user",
+                        "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
+                    }
+                ]
                 while not passed and shots <= 2:
                     self.print_test_status()
-                    prompts = [(
-                        [
-                            *prompt,  # Unpacking the list
-                            {
-                                "role": "assistant",
-                                "content": response
-                            },
-                            {
-                                "role": "user",
-                                "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
-                            }
-                        ], test)
-                    ]
-                    response, inference_time, ttft = self.generate_response(prompt)
+                   
+                    response, inference_time, ttft = self.generate_response(few_shot_prompt)
                     self.print_test_time(index, inference_time, ttft, multi_shot=True)
 
                     extracted_code = self.preprocess_data(response).strip()
                     passed, message = self.validate_code(extracted_code, test, shots)
+                    few_shot_prompt.append(
+                        {
+                            "role": "assistant",
+                            "content": response
+                        })
+                    few_shot_prompt.append(
+                        {
+                            "role": "user",
+                            "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
+                        })
+                    
                     shots += 1
             
             self.num_test += 1
