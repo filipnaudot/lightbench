@@ -61,7 +61,8 @@ class CodeEvaluator:
 
     def print_test_status(self):
         self.clear_last_row()
-        percentage = (self.passed_test / self.num_test) * 100
+        percentage = 0
+        if self.num_test > 0: percentage = (self.passed_test / self.num_test) * 100
         Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
 
 
@@ -95,7 +96,6 @@ class CodeEvaluator:
         signal.signal(signal.SIGALRM, self.timeout_handler)
         signal.alarm(10)
         try:
-            time.sleep(20)
             exec(full_code_to_execute, globals())
         except AssertionError:
             Printer.print_red("FAILED: ", end='')
