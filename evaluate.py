@@ -32,7 +32,7 @@ def main(stream: bool = False, QUANTIZE: bool = False):
 
     system_command = {
         "role": "system",
-        "content": "You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including imports if needed. Do not provide example usage, only the python function.",
+        "content": "You are a Python programming assistant. Your task is to write Python functions according to the user's prompt. Respond only with the necessary Python code, including python package imports if needed. Do not provide example usage, only the python function.",
     }
     prompts = []
     for json_str in json_list:

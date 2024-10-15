@@ -69,7 +69,7 @@ class CodeEvaluator:
         full_code_to_execute = f"{code}\n\n{test}"
         print_yellow(f"{attempts}", end=' ')
         try:
-            exec(full_code_to_execute, {}, {})
+            exec(full_code_to_execute, globals())
             print_green("PASSED")
             return 1, "PASSED"
         except AssertionError:
@@ -109,7 +109,7 @@ class CodeEvaluator:
             # print(f"{response}")
             
             extracted_code = self.preprocess_data(response).strip()
-            
+
             if attempts == 0:
                 print(f"{index} ({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
 
