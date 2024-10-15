@@ -49,7 +49,7 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         prompts.append(promt)
     
     code_evaluator = CodeEvaluator(model_id=model_id, hf_token=hf_token)
-    code_evaluator.generate_response(prompts)
+    code_evaluator.run(prompts, few_shot=True)
 
 
 

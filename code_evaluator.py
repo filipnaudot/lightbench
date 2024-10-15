@@ -6,13 +6,16 @@ import threading
 import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
-from utils import print_green, print_red, print_yellow
+from utils import Printer
 
 class CodeEvaluator:
     def __init__(self, model_id, hf_token, quantize=False):
         self.quantize = quantize
         self.model = model_id
         self.hf_token = hf_token
+
+        self.num_test = 0
+        self.passed_test = 0
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -67,25 +70,26 @@ class CodeEvaluator:
 
     def validate_code(self, code, test, attempts):
         full_code_to_execute = f"{code}\n\n{test}"
-        print_yellow(f"{attempts}", end=' ')
+        Printer.print_yellow(f"{attempts}", end=' ')
         try:
             exec(full_code_to_execute, globals())
-            print_green("PASSED")
+            Printer.print_green("PASSED")
             return 1, "PASSED"
         except AssertionError:
-            print_red("FAILED: ", end='')
+            Printer.print_red("FAILED: ", end='')
             print(f"test {str(test)} FAILED")
             return 0, f"TEST {str(test)} FAILED"
         except Exception as error:
-            print_red("FAILED: ", end='')
+            Printer.print_red("FAILED: ", end='')
             print(f"An error occurred: {error}")
             return 0, f"ERROR: {error}"
 
 
-    def generate_response(self, prompts, attempts=0):
+    def run(self, prompts, attempts=0, few_shot=False):
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
         queue = Queue()
 
+        
         for index, (prompt, test) in enumerate(prompts):
             ttft_list = []
             start_time = time.time()
@@ -110,15 +114,16 @@ class CodeEvaluator:
             
             extracted_code = self.preprocess_data(response).strip()
 
+            print(f"\r{' ' * 40}", end='') # Clear last line            
             if attempts == 0:
-                print(f"{index} ({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
+                print(f"\r{index+1} ({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
 
             else:
-                print(f"\t({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
+                print(f"\r\t({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
                 
-            status, message = self.validate_code(extracted_code, test, attempts)
+            passed, message = self.validate_code(extracted_code, test, attempts)
 
-            if status == 0 and attempts < 3:                
+            if few_shot and not passed and attempts < 2:
                 prompts = [(
                     [
                         *prompt,  # Unpacking the list
@@ -132,4 +137,10 @@ class CodeEvaluator:
                         }
                     ], test)
                 ]
-                self.generate_response(prompts, attempts+1)
+                self.run(prompts, attempts=attempts+1, few_shot=few_shot)
+            
+            self.num_test += 1
+            if passed: self.passed_test += 1
+
+            percentage = (self.passed_test / self.num_test) * 100
+            Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
