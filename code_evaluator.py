@@ -20,6 +20,9 @@ class CodeEvaluator:
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
+        self.streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
+        self.queue = Queue()
+
         if self.quantize:
             self.model = self.load_quantized_model()
 
@@ -48,6 +51,19 @@ class CodeEvaluator:
         return model
 
 
+    def clear_last_row(self):
+        print(f"\r{' ' * 80}", end='') # Clear last line
+        
+    def print_test_time(self, index, inference_time, ttft, multi_shot=False):
+        self.clear_last_row()
+        print(f"\r{index+1} ({inference_time:.2f}s TTFT: {ttft:.2f}s) ", end = '' if not multi_shot else '\t\t')
+
+    def print_test_status(self):
+        self.clear_last_row()
+        percentage = (self.passed_test / self.num_test) * 100
+        Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
+
+
     def handle_stream_output(self, streamer, queue, start_time, ttft_list, verbose=False):
         first_token = True
         for token in streamer:
@@ -68,9 +84,9 @@ class CodeEvaluator:
         return data
 
 
-    def validate_code(self, code, test, attempts):
+    def validate_code(self, code, test, shots):
         full_code_to_execute = f"{code}\n\n{test}"
-        Printer.print_yellow(f"{attempts}", end=' ')
+        Printer.print_yellow(f" {shots}", end=' ')
         try:
             exec(full_code_to_execute, globals())
             Printer.print_green("PASSED")
@@ -85,62 +101,66 @@ class CodeEvaluator:
             return 0, f"ERROR: {error}"
 
 
-    def run(self, prompts, attempts=0, few_shot=False):
-        streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
-        queue = Queue()
+    def run(self, prompts, few_shot=False):
 
-        
         for index, (prompt, test) in enumerate(prompts):
-            ttft_list = []
-            start_time = time.time()
+            response, inference_time, ttft = self.generate_response(prompt)
 
-            streaming_thread = threading.Thread(target=self.handle_stream_output, args=(streamer, queue, start_time, ttft_list))
-            streaming_thread.start()
+            self.print_test_time(index, inference_time, ttft, multi_shot=False)
 
-            generation = self.generator(
-                prompt,
-                streamer=streamer,
-                do_sample=False,
-                temperature=1.0,
-                top_p=1,
-                max_new_tokens=512,
-            )
-            end_time = time.time()
-
-            streaming_thread.join()
-            
-            response = generation[0]['generated_text'][-1]['content']
-            # print(f"{response}")
-            
             extracted_code = self.preprocess_data(response).strip()
+            passed, message = self.validate_code(extracted_code, test, 0)
 
-            print(f"\r{' ' * 40}", end='') # Clear last line            
-            if attempts == 0:
-                print(f"\r{index+1} ({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
+            if few_shot and not passed:
+                shots = 1
+                while not passed and shots <= 2:
+                    self.print_test_status()
+                    prompts = [(
+                        [
+                            *prompt,  # Unpacking the list
+                            {
+                                "role": "assistant",
+                                "content": response
+                            },
+                            {
+                                "role": "user",
+                                "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
+                            }
+                        ], test)
+                    ]
+                    response, inference_time, ttft = self.generate_response(prompt)
+                    self.print_test_time(index, inference_time, ttft, multi_shot=True)
 
-            else:
-                print(f"\r\t({end_time - start_time:.2f}s TTFT: {ttft_list[-1]:.2f}s)", end='\t')
-                
-            passed, message = self.validate_code(extracted_code, test, attempts)
-
-            if few_shot and not passed and attempts < 2:
-                prompts = [(
-                    [
-                        *prompt,  # Unpacking the list
-                        {
-                            "role": "assistant",
-                            "content": response
-                        },
-                        {
-                            "role": "user",
-                            "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
-                        }
-                    ], test)
-                ]
-                self.run(prompts, attempts=attempts+1, few_shot=few_shot)
+                    extracted_code = self.preprocess_data(response).strip()
+                    passed, message = self.validate_code(extracted_code, test, shots)
+                    shots += 1
             
             self.num_test += 1
             if passed: self.passed_test += 1
 
-            percentage = (self.passed_test / self.num_test) * 100
-            Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
+            self.print_test_status()
+
+
+    def generate_response(self, prompt):
+        ttft_list = []
+        start_time = time.time()
+
+        streaming_thread = threading.Thread(target=self.handle_stream_output, args=(self.streamer, self.queue, start_time, ttft_list))
+        streaming_thread.start()
+
+        generation = self.generator(
+            prompt,
+            streamer=self.streamer,
+            do_sample=False,
+            temperature=1.0,
+            top_p=1,
+            max_new_tokens=512,
+        )
+        end_time = time.time()
+
+        streaming_thread.join()
+        
+        response = generation[0]['generated_text'][-1]['content']
+        # print(f"{response}")
+
+        return response, (end_time-start_time), ttft_list[-1]
