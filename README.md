@@ -1,7 +1,7 @@
 <div align='center'>
     <p>
         <img src="https://img.shields.io/badge/Ubuntu-20.04-orange">
-        <img src="https://img.shields.io/badge/python->=3.11.05-blue">
+        <img src="https://img.shields.io/badge/python->=3.11.3-blue">
     </p>
 </div>
 
