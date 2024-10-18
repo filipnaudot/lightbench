@@ -12,14 +12,14 @@ class Colors:
     RESET                 = '\033[0m'
 
 class Printer:
-    def print_green(input, end="\n"):
-        print(f"{Colors.GREEN_TEXT}{input}{Colors.RESET}", end=end)
+    def print_green(input, end="\n", flush=False):
+        print(f"{Colors.GREEN_TEXT}{input}{Colors.RESET}", end=end, flush=flush)
 
-    def print_yellow(input, end="\n"):
-        print(f"{Colors.YELLOW_TEXT}{input}{Colors.RESET}", end=end)
+    def print_yellow(input, end="\n", flush=False):
+        print(f"{Colors.YELLOW_TEXT}{input}{Colors.RESET}", end=end, flush=flush)
 
-    def print_red(input, end="\n"):
-        print(f"{Colors.RED_TEXT}{input}{Colors.RESET}", end=end)
+    def print_red(input, end="\n", flush=False):
+        print(f"{Colors.RED_TEXT}{input}{Colors.RESET}", end=end, flush=flush)
 
-    def print_cyan(input, end="\n"):
-        print(f"{Colors.CYAN_TEXT}{input}{Colors.RESET}", end=end)
+    def print_cyan(input, end="\n", flush=False):
+        print(f"{Colors.CYAN_TEXT}{input}{Colors.RESET}", end=end, flush=flush)
