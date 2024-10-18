@@ -53,17 +53,17 @@ class CodeEvaluator:
 
 
     def clear_last_row(self):
-        print(f"\r{' ' * 80}", end='') # Clear last line
+        print(f"\r{' ' * 40}\r", end='', flush=True) # Clear last line
         
-    def print_test_time(self, index, inference_time, ttft, multi_shot=False):
+    def print_test_time(self, index, inference_time, ttft):
         self.clear_last_row()
-        print(f"\r{index+1} ({inference_time:.2f}s TTFT: {ttft:.2f}s) ", end = '' if not multi_shot else '\t\t')
+        print(f"\r{index+1} ({inference_time:.2f}s TTFT: {ttft:.2f}s) ", end='', flush=True)
 
     def print_test_status(self):
         self.clear_last_row()
         percentage = 0
         if self.num_test > 0: percentage = (self.passed_test / self.num_test) * 100
-        Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
+        Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='', flush=True)
 
 
     def handle_stream_output(self, streamer, queue, start_time, ttft_list, verbose=False):
@@ -91,28 +91,30 @@ class CodeEvaluator:
 
 
     def validate_code(self, code, test, shots):
+        indent_format = f"\033[{30}G" if shots > 0 else f"\033[{25}G"
+
         full_code_to_execute = f"{code}\n\n{test}"
-        Printer.print_yellow(f" {shots}", end=' ')
+        Printer.print_yellow(f"{indent_format}{shots} ", end='', flush=True)
         signal.signal(signal.SIGALRM, self.timeout_handler)
         signal.alarm(10)
         try:
             exec(full_code_to_execute, globals())
         except AssertionError:
-            Printer.print_red("FAILED: ", end='')
+            Printer.print_red(f"FAILED: ", end='')
             print(f"test {str(test)} FAILED")
-            return 0, f"TEST {str(test)} FAILED"
+            return 0, f"There is a logical error in the code. TEST: {str(test)} FAILED"
         except Exception as error:
-            Printer.print_red("FAILED: ", end='')
+            Printer.print_red(f"FAILED: ", end='')
             print(f"An error occurred: {error}")
             return 0, f"ERROR: {error}"
         except TimeoutError as error:
-            Printer.print_red("FAILED: ", end='')
+            Printer.print_red(f"FAILED: ", end='')
             print(f"{error}")
             return 0, f"FAILED: {error}"
         finally:
             signal.alarm(0)
         
-        Printer.print_green("PASSED")
+        Printer.print_green(f"PASSED")
         return 1, "PASSED"
 
 
@@ -121,7 +123,7 @@ class CodeEvaluator:
         for index, (prompt, test) in enumerate(prompts):
             response, inference_time, ttft = self.generate_response(prompt)
 
-            self.print_test_time(index, inference_time, ttft, multi_shot=False)
+            self.print_test_time(index, inference_time, ttft)
 
             extracted_code = self.preprocess_data(response).strip()
             passed, message = self.validate_code(extracted_code, test, 0)
@@ -143,7 +145,7 @@ class CodeEvaluator:
                     self.print_test_status()
                    
                     response, inference_time, ttft = self.generate_response(few_shot_prompt)
-                    self.print_test_time(index, inference_time, ttft, multi_shot=True)
+                    self.print_test_time(index, inference_time, ttft)
 
                     extracted_code = self.preprocess_data(response).strip()
                     passed, message = self.validate_code(extracted_code, test, shots)
