@@ -11,6 +11,8 @@ Repository for the paper: ***Efficient LLMs: A Study in Resource Minimization***
 
 
 ## Chat example
+Example of a chat using [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct), running on a GTX 1080 TI.
+
 ![Demo of Terminal Chat Interface](./readme_assets/demo.gif)
 
 ## Getting Started
