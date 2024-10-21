@@ -3,6 +3,7 @@ import time
 from queue import Queue
 import threading
 import signal
+import json
 
 import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
@@ -10,20 +11,24 @@ from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndB
 from utils import Printer
 
 class CodeEvaluator:
-    def __init__(self, model_id, hf_token, quantize=False, verbose=False):
-        self.verbose = verbose
-        self.quantize = quantize
-        self.model = model_id
-        self.hf_token = hf_token
+    def __init__(self, model_id, hf_token, quantize=False, few_shot=False, verbose=False):
+        self.verbose:bool = verbose
+        self.few_shot:bool = few_shot
+        self.quantize:bool = quantize
+        self.model:str = model_id
+        self.hf_token:str = hf_token
 
-        self.num_test = 0
-        self.passed_test = 0
+        self.inference_time_list:list[float] = []
+        self.ttft_list:list[float] = []
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.num_test:int = 0
+        self.passed_test:int = 0
 
-        self.streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
-        self.queue = Queue()
+        self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
+        self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
+
+        self.streamer:TextIteratorStreamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
+        self.queue:Queue = Queue()
 
         if self.quantize:
             self.model = self.load_quantized_model()
@@ -51,6 +56,37 @@ class CodeEvaluator:
         )
 
         return model
+    
+
+    def print_summary(self):
+        if len(self.inference_time_list) > 0:
+            avg_inference_time = sum(self.inference_time_list) / len(self.inference_time_list)
+        else:
+            avg_inference_time = 0.0
+
+        if len(self.ttft_list) > 0:
+            avg_ttft = sum(self.ttft_list) / len(self.ttft_list)
+        else:
+            avg_ttft = 0.0
+
+        if self.num_test > 0:
+            passed_percentage = (self.passed_test / self.num_test) * 100
+        else:
+            passed_percentage = 0.0
+
+        summary = {
+            "average_inference_time": round(avg_inference_time, 2),
+            "average_ttft": round(avg_ttft, 2),
+            "passed_tests": self.passed_test,
+            "total_tests": self.num_test,
+            "passed_percentage": round(passed_percentage, 2)
+        }
+
+        print(json.dumps(summary, indent=4))
+
+        os.makedirs("./results", exist_ok=True)
+        with open(f"./results/{self.model.replace('/','-')}---few_shot={str(self.few_shot)}.json", "a") as file:
+            file.write(json.dumps(summary) + "\n")
 
 
     def clear_last_row(self):
@@ -120,7 +156,7 @@ class CodeEvaluator:
         return 1, "PASSED"
 
 
-    def run(self, prompts, few_shot=False):
+    def run(self, prompts):
 
         for index, (prompt, test) in enumerate(prompts):
             response, inference_time, ttft = self.generate_response(prompt)
@@ -130,7 +166,7 @@ class CodeEvaluator:
             extracted_code = self.preprocess_data(response).strip()
             passed, message = self.validate_code(extracted_code, test, 0)
 
-            if few_shot and not passed:
+            if self.few_shot and not passed:
                 shots = 1
                 few_shot_prompt = [
                     *prompt,  # Unpacking the list
@@ -148,6 +184,8 @@ class CodeEvaluator:
                    
                     response, inference_time, ttft = self.generate_response(few_shot_prompt)
                     self.print_test_time(index, inference_time, ttft)
+                    self.inference_time_list.append(inference_time)
+                    self.ttft_list.append(ttft)
 
                     extracted_code = self.preprocess_data(response).strip()
                     passed, message = self.validate_code(extracted_code, test, shots)
@@ -168,6 +206,7 @@ class CodeEvaluator:
             if passed: self.passed_test += 1
 
             self.print_test_status()
+        print()
 
 
     def generate_response(self, prompt):

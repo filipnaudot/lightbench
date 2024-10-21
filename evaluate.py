@@ -48,8 +48,10 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         )
         prompts.append(promt)
     
-    code_evaluator = CodeEvaluator(model_id=model_id, hf_token=hf_token, quantize=False, verbose=True)
-    code_evaluator.run(prompts, few_shot=True)
+    code_evaluator = CodeEvaluator(model_id=model_id, hf_token=hf_token, quantize=False, few_shot=False, verbose=False)
+    code_evaluator.run(prompts)
+
+    code_evaluator.print_summary()
 
 
 
