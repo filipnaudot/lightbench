@@ -11,11 +11,12 @@ from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndB
 from utils import Printer
 
 class CodeEvaluator:
-    def __init__(self, model_id, hf_token, quantize=False, few_shot=False, verbose=False):
+    def __init__(self, model_name, hf_token, quantize=False, few_shot=False, verbose=False):
         self.verbose:bool = verbose
         self.few_shot:bool = few_shot
         self.quantize:bool = quantize
-        self.model:str = model_id
+        
+        self.model_name:str = model_name
         self.hf_token:str = hf_token
 
         self.inference_time_list:list[float] = []
@@ -24,7 +25,7 @@ class CodeEvaluator:
         self.num_test:int = 0
         self.passed_test:int = 0
 
-        self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
+        self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
         self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.streamer:TextIteratorStreamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
@@ -32,6 +33,8 @@ class CodeEvaluator:
 
         if self.quantize:
             self.model = self.load_quantized_model()
+        else:
+            self.model = model_name
 
         self.generator = pipeline(
             "text-generation",
@@ -49,7 +52,7 @@ class CodeEvaluator:
         bnb_config = BitsAndBytesConfig(load_in_4bit=True)
 
         model = AutoModelForCausalLM.from_pretrained(
-            self.model,
+            self.model_name,
             quantization_config=bnb_config,
             device_map="auto",
             torch_dtype=torch.bfloat16,
@@ -75,6 +78,8 @@ class CodeEvaluator:
             passed_percentage = 0.0
 
         summary = {
+            "quantize": str(self.quantize),
+            "few_shot": str(self.few_shot),
             "average_inference_time": round(avg_inference_time, 2),
             "average_ttft": round(avg_ttft, 2),
             "passed_tests": self.passed_test,
@@ -85,8 +90,8 @@ class CodeEvaluator:
         print(json.dumps(summary, indent=4))
 
         os.makedirs("./results", exist_ok=True)
-        with open(f"./results/{self.model.replace('/','-')}---few_shot={str(self.few_shot)}.json", "a") as file:
-            file.write(json.dumps(summary) + "\n")
+        with open(f"./results/{self.model_name.replace('/','-')}---quantize={str(self.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
+            file.write(json.dumps(summary, indent=4))
 
 
     def clear_last_row(self):
@@ -184,8 +189,6 @@ class CodeEvaluator:
                    
                     response, inference_time, ttft = self.generate_response(few_shot_prompt)
                     self.print_test_time(index, inference_time, ttft)
-                    self.inference_time_list.append(inference_time)
-                    self.ttft_list.append(ttft)
 
                     extracted_code = self.preprocess_data(response).strip()
                     passed, message = self.validate_code(extracted_code, test, shots)
@@ -202,8 +205,11 @@ class CodeEvaluator:
                     
                     shots += 1
             
+            self.inference_time_list.append(inference_time)
+            self.ttft_list.append(ttft)
             self.num_test += 1
-            if passed: self.passed_test += 1
+            if passed:
+                self.passed_test += 1
 
             self.print_test_status()
         print()
