@@ -48,7 +48,7 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         )
         prompts.append(promt)
     
-    code_evaluator = CodeEvaluator(model_id=model_id, hf_token=hf_token, quantize=False)
+    code_evaluator = CodeEvaluator(model_id=model_id, hf_token=hf_token, quantize=False, verbose=True)
     code_evaluator.run(prompts, few_shot=True)
 
 

@@ -10,7 +10,8 @@ from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndB
 from utils import Printer
 
 class CodeEvaluator:
-    def __init__(self, model_id, hf_token, quantize=False):
+    def __init__(self, model_id, hf_token, quantize=False, verbose=False):
+        self.verbose = verbose
         self.quantize = quantize
         self.model = model_id
         self.hf_token = hf_token
@@ -66,7 +67,7 @@ class CodeEvaluator:
         Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='', flush=True)
 
 
-    def handle_stream_output(self, streamer, queue, start_time, ttft_list, verbose=False):
+    def handle_stream_output(self, streamer, queue, start_time, ttft_list, print_stream=False):
         first_token = True
         for token in streamer:
             if first_token:
@@ -74,7 +75,7 @@ class CodeEvaluator:
                 ttft_list.append(ttft)
                 first_token = False
             
-            if verbose:
+            if print_stream:
                 print(f"{token}", end='', flush=True)
             queue.put(token)
 
@@ -92,6 +93,7 @@ class CodeEvaluator:
 
     def validate_code(self, code, test, shots):
         indent_format = f"\033[{30}G" if shots > 0 else f"\033[{25}G"
+        end = "" if self.verbose else "\n"
 
         full_code_to_execute = f"{code}\n\n{test}"
         Printer.print_yellow(f"{indent_format}{shots} ", end='', flush=True)
@@ -100,16 +102,16 @@ class CodeEvaluator:
         try:
             exec(full_code_to_execute, globals())
         except AssertionError:
-            Printer.print_red(f"FAILED: ", end='')
-            print(f"test {str(test)} FAILED")
+            Printer.print_red(f"FAILED", end=end)
+            if self.verbose: print(f": test {str(test)} FAILED")
             return 0, f"There is a logical error in the code. TEST: {str(test)} FAILED"
         except Exception as error:
-            Printer.print_red(f"FAILED: ", end='')
-            print(f"An error occurred: {error}")
+            Printer.print_red(f"FAILED", end=end)
+            if self.verbose: print(f": An error occurred: {error}")
             return 0, f"ERROR: {error}"
         except TimeoutError as error:
-            Printer.print_red(f"FAILED: ", end='')
-            print(f"{error}")
+            Printer.print_red(f"FAILED", end=end)
+            if self.verbose: print(f": {error}")
             return 0, f"FAILED: {error}"
         finally:
             signal.alarm(0)
