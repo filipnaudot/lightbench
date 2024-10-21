@@ -24,7 +24,7 @@ def main(stream: bool = False, QUANTIZE: bool = False):
 
 
     start_test_line = 11
-    end_test_line = 14 # 510
+    end_test_line = 510
     with open('./data/mbpp/mbpp.jsonl', 'r') as json_file:
         json_list = list(json_file)[start_test_line-1:end_test_line]
 
