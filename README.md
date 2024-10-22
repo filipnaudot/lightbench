@@ -2,6 +2,8 @@
     <p>
         <img src="https://img.shields.io/badge/Ubuntu-20.04-orange">
         <img src="https://img.shields.io/badge/python->=3.11.3-blue">
+        <br>
+        <img src="https://img.shields.io/badge/-HuggingFace-FDEE21?style=for-the-badge&logo=HuggingFace&logoColor=black">
     </p>
 </div>
 
