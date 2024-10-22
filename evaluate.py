@@ -58,6 +58,8 @@ def main(stream: bool = False, QUANTIZE: bool = False):
 
         code_evaluator.print_summary()
 
+        torch.cuda.empty_cache()
+
 
 if __name__ == "__main__":
     main(stream=True, QUANTIZE=False)
