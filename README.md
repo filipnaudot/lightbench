@@ -4,6 +4,7 @@
         <img src="https://img.shields.io/badge/python->=3.11.3-blue">
         <br>
         <img src="https://img.shields.io/badge/-HuggingFace-FDEE21?style=for-the-badge&logo=HuggingFace&logoColor=black">
+        <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white">
     </p>
 </div>
 
