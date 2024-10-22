@@ -50,10 +50,10 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     
     prompts = create_prompts(json_list, system_command)
     
-    models = ["meta-llama/Llama-3.2-3B-Instruct", "meta-llama/Llama-3.1-8B-Instruct"]
-    for model in models:
-        print(f"{model}")
-        code_evaluator = CodeEvaluator(model, hf_token, quantize=True, few_shot=False, verbose=False)
+    models = [("meta-llama/Llama-3.2-3B-Instruct", False), ("meta-llama/Llama-3.2-3B-Instruct", True), ("meta-llama/Llama-3.1-8B-Instruct", True)]
+    for model, quantize in models:
+        print(f"\n---- {'quantized' if quantize else 'unmodified'} {model} ----\n")
+        code_evaluator = CodeEvaluator(model, hf_token, quantize=quantize, few_shot=False, verbose=False)
         code_evaluator.run(prompts)
 
         code_evaluator.print_summary()
