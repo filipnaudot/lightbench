@@ -1,4 +1,5 @@
 import os
+import gc
 import time
 from queue import Queue
 import threading
@@ -60,6 +61,17 @@ class CodeEvaluator:
 
         return model
     
+
+    def cleanup(self):        
+        del self.generator
+        del self.tokenizer
+        del self.model
+        del self.streamer
+        del self.queue
+        gc.collect()
+
+        torch.cuda.empty_cache()
+
 
     def print_summary(self):
         if len(self.inference_time_list) > 0:

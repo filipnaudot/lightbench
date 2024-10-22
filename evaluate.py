@@ -2,6 +2,7 @@ import os
 import time
 import json
 
+
 from dotenv import load_dotenv
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
@@ -29,7 +30,7 @@ def create_prompts(json_list, system_command):
     return prompts
 
 
-def main(stream: bool = False, QUANTIZE: bool = False):
+def main():
 
     load_dotenv()
     hf_token = os.getenv("HUGGINGFACE_TOKEN")
@@ -50,16 +51,30 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     
     prompts = create_prompts(json_list, system_command)
     
-    models = [("meta-llama/Llama-3.2-3B-Instruct", False), ("meta-llama/Llama-3.2-3B-Instruct", True), ("meta-llama/Llama-3.1-8B-Instruct", True)]
-    for model, quantize in models:
-        print(f"\n---- {'quantized' if quantize else 'unmodified'} {model} ----\n")
-        code_evaluator = CodeEvaluator(model, hf_token, quantize=quantize, few_shot=False, verbose=False)
+    #                 MODEL NAME                   QUANT  FEW-SHOT
+    models = [("meta-llama/Llama-3.2-3B-Instruct", False, False),
+              ("meta-llama/Llama-3.2-3B-Instruct", False, True),
+              ("meta-llama/Llama-3.2-3B-Instruct", True,  False),
+              ("meta-llama/Llama-3.2-3B-Instruct", True,  True),
+
+              # ("meta-llama/Llama-3.1-8B-Instruct", False, False),
+              # ("meta-llama/Llama-3.1-8B-Instruct", False, True),
+              ("meta-llama/Llama-3.1-8B-Instruct", True,  False),
+              ("meta-llama/Llama-3.1-8B-Instruct", True,  True),
+              ]
+
+
+    for model, quantize, few_shot in models:
+        print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n    few-shot: {str(few_shot)}\n")
+        
+        code_evaluator = CodeEvaluator(model, hf_token, quantize=quantize, few_shot=few_shot, verbose=False)
         code_evaluator.run(prompts)
 
         code_evaluator.print_summary()
+        code_evaluator.cleanup()
+        time.sleep(3)
 
-        torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":
-    main(stream=True, QUANTIZE=False)
+    main()
