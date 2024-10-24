@@ -34,8 +34,6 @@ def main():
 
     load_dotenv()
     hf_token = os.getenv("HUGGINGFACE_TOKEN")
-    # tokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
-    # device = "cuda" if torch.cuda.is_available() else "cpu"
     models = ["meta-llama/Llama-3.2-3B-Instruct", "meta-llama/Llama-3.1-8B-Instruct"]
 
 
