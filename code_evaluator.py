@@ -1,10 +1,13 @@
 import os
 import gc
+import io
+from contextlib import redirect_stdout
 import time
 from queue import Queue
 import threading
 import signal
 import json
+
 
 import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
@@ -153,7 +156,9 @@ class CodeEvaluator:
         signal.signal(signal.SIGALRM, self.timeout_handler)
         signal.alarm(10)
         try:
-            exec(full_code_to_execute, globals())
+            # Redirect output for cleaner terminal since executed code might have prints
+            with io.StringIO() as buffer, redirect_stdout(buffer):
+                exec(full_code_to_execute, globals())
         except AssertionError:
             Printer.print_red(f"FAILED", end=end)
             if self.verbose: print(f": test {str(test)} FAILED")
