@@ -156,7 +156,7 @@ class CodeEvaluator:
         signal.signal(signal.SIGALRM, self.timeout_handler)
         signal.alarm(10)
         try:
-            # Redirect output for cleaner terminal since executed code might have prints
+            # Redirect stdout for cleaner terminal since executed code might have prints
             with io.StringIO() as buffer, redirect_stdout(buffer):
                 exec(full_code_to_execute, globals())
         except AssertionError:
