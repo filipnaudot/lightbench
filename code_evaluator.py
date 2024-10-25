@@ -111,13 +111,13 @@ class CodeEvaluator:
         
     def print_test_time(self, index, inference_time, ttft):
         self.clear_last_row()
-        print(f"\r{index+1} ({inference_time:.2f}s TTFT: {ttft:.2f}s) ", end='', flush=True)
+        print(f"\r{index+1} ({inference_time:.2f}s TTFT: {ttft:.2f}s) ", end='')
 
     def print_test_status(self):
         self.clear_last_row()
         percentage = 0
         if self.num_test > 0: percentage = (self.passed_test / self.num_test) * 100
-        Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='', flush=True)
+        Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
 
 
     def handle_stream_output(self, streamer, queue, start_time, ttft_list, print_stream=False):
@@ -149,7 +149,7 @@ class CodeEvaluator:
         end = "" if self.verbose else "\n"
 
         full_code_to_execute = f"{code}\n\n{test}"
-        Printer.print_yellow(f"{indent_format}{shots} ", end='', flush=True)
+        Printer.print_yellow(f"{indent_format}{shots} ", end='')
         signal.signal(signal.SIGALRM, self.timeout_handler)
         signal.alarm(10)
         try:
