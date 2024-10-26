@@ -31,3 +31,10 @@ pip3 install transformers
 pip3 install python-dotenv
 ```
 
+```bash
+pip3 install bitsandbytes
+```
+
+```bash
+pip3 install 'accelerate>=0.26.0'
+```
