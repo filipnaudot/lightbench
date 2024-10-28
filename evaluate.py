@@ -34,8 +34,6 @@ def main():
 
     load_dotenv()
     hf_token = os.getenv("HUGGINGFACE_TOKEN")
-    models = ["meta-llama/Llama-3.2-3B-Instruct", "meta-llama/Llama-3.1-8B-Instruct"]
-
 
     start_test_line = 11
     end_test_line = 510
