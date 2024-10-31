@@ -35,8 +35,8 @@ def main():
     load_dotenv()
     hf_token = os.getenv("HUGGINGFACE_TOKEN")
 
-    start_test_line = 11
-    end_test_line = 510
+    start_test_line = 1
+    end_test_line = 450
     with open('./data/mbpp/mbpp.jsonl', 'r') as json_file:
         json_list = list(json_file)[start_test_line-1:end_test_line]
 
@@ -59,8 +59,8 @@ def main():
               ("meta-llama/Llama-3.2-3B-Instruct", True,  True),
               
               # TODO: Check if model can run on GPU instead of manual remove
-              # ("meta-llama/Llama-3.1-8B-Instruct", False, False),
-              # ("meta-llama/Llama-3.1-8B-Instruct", False, True),
+              ("meta-llama/Llama-3.1-8B-Instruct", False, False),
+              ("meta-llama/Llama-3.1-8B-Instruct", False, True),
               ("meta-llama/Llama-3.1-8B-Instruct", True,  False),
               ("meta-llama/Llama-3.1-8B-Instruct", True,  True),
               ]
