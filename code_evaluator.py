@@ -190,6 +190,7 @@ class CodeEvaluator:
 
             if self.few_shot and not passed:
                 shots = 1
+                # TODO: Refactor few-shot prompt creation.
                 few_shot_prompt = [
                     *prompt,  # Unpacking the list
                     {
