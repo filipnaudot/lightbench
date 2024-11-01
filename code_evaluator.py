@@ -185,40 +185,21 @@ class CodeEvaluator:
             passed, message = self.validate_code(extracted_code, test, 0)
 
             if self.few_shot and not passed:
+                prompt = self.create_few_shot_prompt(prompt, response, message)
                 shots = 1
-                # TODO: Refactor few-shot prompt creation.
-                few_shot_prompt = [
-                    *prompt,  # Unpacking the list
-                    {
-                        "role": "assistant",
-                        "content": response
-                    },
-                    {
-                        "role": "user",
-                        "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
-                    }
-                ]
+
                 while not passed and shots <= 2:
                     self.print_test_status()
-                   
-                    response, inference_time, ttft = self.generate_response(few_shot_prompt)
+
+                    response, inference_time, ttft = self.generate_response(prompt)
                     self.print_test_time(index, inference_time, ttft)
 
                     extracted_code = self.preprocess_data(response).strip()
                     passed, message = self.validate_code(extracted_code, test, shots)
-                    few_shot_prompt.append(
-                        {
-                            "role": "assistant",
-                            "content": response
-                        })
-                    few_shot_prompt.append(
-                        {
-                            "role": "user",
-                            "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
-                        })
-                    
+
+                    prompt = self.create_few_shot_prompt(prompt, response, message)
                     shots += 1
-            
+
             self.inference_time_list.append(inference_time)
             self.ttft_list.append(ttft)
             self.num_test += 1
@@ -227,6 +208,19 @@ class CodeEvaluator:
 
             self.print_test_status()
         print()
+
+    def create_few_shot_prompt(self, prompt, response, message):
+        return [
+            *prompt,
+            {
+                "role": "assistant",
+                "content": response
+            },
+            {
+                "role": "user",
+                "content": f' While running that code I received the following: {message}. Can you update the code and fix the problem?',
+            }
+        ]
 
 
     def generate_response(self, prompt):
