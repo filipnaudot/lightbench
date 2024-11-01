@@ -3,7 +3,6 @@ import gc
 import io
 from contextlib import redirect_stdout
 import time
-from queue import Queue
 import threading
 import signal
 import json
@@ -33,7 +32,6 @@ class CodeEvaluator:
         self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
 
         self.streamer:TextIteratorStreamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
-        self.queue:Queue = Queue()
 
         if self.quantize:
             self.model = self.load_quantized_model()
@@ -70,7 +68,6 @@ class CodeEvaluator:
         del self.tokenizer
         del self.model
         del self.streamer
-        del self.queue
         gc.collect()
 
         torch.cuda.empty_cache()
@@ -123,7 +120,7 @@ class CodeEvaluator:
         Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
 
 
-    def handle_stream_output(self, streamer, queue, start_time, ttft_list, print_stream=False):
+    def handle_stream_output(self, streamer, start_time, ttft_list, print_stream=False):
         first_token = True
         for token in streamer:
             if first_token:
@@ -133,7 +130,6 @@ class CodeEvaluator:
             
             if print_stream:
                 print(f"{token}", end='', flush=True)
-            queue.put(token)
 
 
     def preprocess_data(self, data):
@@ -235,9 +231,10 @@ class CodeEvaluator:
 
     def generate_response(self, prompt):
         ttft_list = []
+
         start_time = time.time()
 
-        streaming_thread = threading.Thread(target=self.handle_stream_output, args=(self.streamer, self.queue, start_time, ttft_list))
+        streaming_thread = threading.Thread(target=self.handle_stream_output, args=(self.streamer, start_time, ttft_list))
         streaming_thread.start()
 
         generation = self.generator(
@@ -253,6 +250,5 @@ class CodeEvaluator:
         streaming_thread.join()
         
         response = generation[0]['generated_text'][-1]['content']
-        # print(f"{response}")
 
         return response, (end_time-start_time), ttft_list[-1]
