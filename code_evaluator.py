@@ -12,10 +12,11 @@ import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
 from utils import Printer
+from evaluator import Evaluator
 
-class CodeEvaluator:
+class CodeEvaluator(Evaluator):
     def __init__(self, model_name, hf_token, quantize=False, few_shot=False, verbose=False):
-        self.verbose:bool = verbose
+        super().__init__(verbose)
         self.few_shot:bool = few_shot
         self.quantize:bool = quantize
         
