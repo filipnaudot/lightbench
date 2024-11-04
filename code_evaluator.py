@@ -24,6 +24,7 @@ class CodeEvaluator:
 
         self.inference_time_list:list[float] = []
         self.ttft_list:list[float] = []
+        self.memory_usage_list:list[float] = []
 
         self.num_test:int = 0
         self.passed_test:int = 0
@@ -65,10 +66,11 @@ class CodeEvaluator:
 
     def _clear_last_row(self):
         print(f"\r{' ' * 40}\r", end='', flush=True) # Clear last line
-        
-    def _print_test_time(self, index, inference_time, ttft):
+    
+    def _print_test_metrics(self, index, inference_time, ttft, memory_usage):
         self._clear_last_row()
-        print(f"\r{index+1} ({inference_time:.2f}s TTFT: {ttft:.2f}s) ", end='')
+        print(f"\r{index+1} ({inference_time:.2f}s, TTFT: {ttft:.2f}s, Memory: {memory_usage:.2f} GB) ", end='')
+
 
     def _print_test_status(self):
         self._clear_last_row()
@@ -101,7 +103,7 @@ class CodeEvaluator:
 
 
     def _validate_code(self, code, test, shots):
-        indent_format = f"\033[{30}G" if shots > 0 else f"\033[{25}G"
+        indent_format = f"\033[{50}G" if shots > 0 else f"\033[{45}G"
         end = "" if self.verbose else "\n"
 
         full_code_to_execute = f"{code}\n\n{test}"
@@ -133,7 +135,8 @@ class CodeEvaluator:
 
     def _generate_response(self, prompt):
         ttft_list = []
-
+        torch.cuda.reset_peak_memory_stats()
+        
         start_time = time.time()
 
         streaming_thread = threading.Thread(target=self._handle_stream_output, args=(self.streamer, start_time, ttft_list))
@@ -153,7 +156,14 @@ class CodeEvaluator:
         
         response = generation[0]['generated_text'][-1]['content']
 
-        return response, (end_time-start_time), ttft_list[-1]
+        # Measure peak GPU memory usage (in GB)
+        peak_memory_usage = torch.cuda.max_memory_allocated() / (1024 ** 3)
+
+        self.inference_time_list.append((end_time-start_time))
+        self.ttft_list.append(ttft_list[-1])
+        self.memory_usage_list.append(peak_memory_usage)
+
+        return response, (end_time-start_time), ttft_list[-1], peak_memory_usage
     
     
     def _create_few_shot_prompt(self, prompt, response, message):
@@ -171,12 +181,9 @@ class CodeEvaluator:
     
 
     def run(self, prompts):
-
         for index, (prompt, test) in enumerate(prompts):
-            response, inference_time, ttft = self._generate_response(prompt)
-
-            self._print_test_time(index, inference_time, ttft)
-
+            response, inference_time, ttft, memory_usage = self._generate_response(prompt)
+            self._print_test_metrics(index, inference_time, ttft, memory_usage)
             extracted_code = self._preprocess_data(response).strip()
             passed, message = self._validate_code(extracted_code, test, 0)
 
@@ -187,17 +194,14 @@ class CodeEvaluator:
                 while not passed and shots <= 2:
                     self._print_test_status()
 
-                    response, inference_time, ttft = self._generate_response(prompt)
-                    self._print_test_time(index, inference_time, ttft)
-
+                    response, inference_time, ttft, memory_usage = self._generate_response(prompt)
+                    self._print_test_metrics(index, inference_time, ttft, memory_usage)
                     extracted_code = self._preprocess_data(response).strip()
                     passed, message = self._validate_code(extracted_code, test, shots)
 
                     prompt = self._create_few_shot_prompt(prompt, response, message)
                     shots += 1
 
-            self.inference_time_list.append(inference_time)
-            self.ttft_list.append(ttft)
             self.num_test += 1
             if passed:
                 self.passed_test += 1
@@ -227,6 +231,11 @@ class CodeEvaluator:
         else:
             avg_ttft = 0.0
 
+        if len(self.memory_usage_list) > 0:
+            avg_memory_usage = sum(self.memory_usage_list) / len(self.memory_usage_list)
+        else:
+            avg_memory_usage = 0.0
+
         if self.num_test > 0:
             passed_percentage = (self.passed_test / self.num_test) * 100
         else:
@@ -237,6 +246,7 @@ class CodeEvaluator:
             "few_shot": str(self.few_shot),
             "average_inference_time": round(avg_inference_time, 2),
             "average_ttft": round(avg_ttft, 2),
+            "average_mem_usage": round(avg_memory_usage, 2),
             "passed_tests": self.passed_test,
             "total_tests": self.num_test,
             "passed_percentage": round(passed_percentage, 2)
@@ -245,5 +255,5 @@ class CodeEvaluator:
         print(json.dumps(summary, indent=4))
 
         os.makedirs("./results", exist_ok=True)
-        with open(f"./results/TEST-{self.model_name.replace('/','-')}---quantize={str(self.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
+        with open(f"./results/{self.model_name.replace('/','-')}---quantize={str(self.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
             file.write(json.dumps(summary, indent=4))
