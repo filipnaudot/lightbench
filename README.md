@@ -9,9 +9,7 @@
 </div>
 
 
-# efficient-llm-benchmark
-Repository for the paper: ***Efficient LLMs: A Study in Resource Minimization***
-
+# LLM Benchmark Framework
 
 ## Chat example
 Example of a chat using [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct), running on a GTX 1080 TI.
@@ -38,3 +36,6 @@ pip3 install bitsandbytes
 ```bash
 pip3 install 'accelerate>=0.26.0'
 ```
+
+## Paper
+***Efficient LLMs: A Study in Resource Reduction***
