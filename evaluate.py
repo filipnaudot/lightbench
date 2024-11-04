@@ -48,7 +48,7 @@ def create_coding_prompts(json_list, system_command):
 
 def evaluate_code(hf_token):
     start_test_line = 1
-    end_test_line = 3 #450
+    end_test_line = 450
     with open('./data/mbpp/mbpp.jsonl', 'r') as json_file:
         json_list = list(json_file)[start_test_line-1:end_test_line]
 
