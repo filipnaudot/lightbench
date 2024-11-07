@@ -6,12 +6,12 @@ class Evaluator(ABC):
 
     @abstractmethod
     def run(self, prompts):
-        pass
+        raise NotImplementedError
     
     @abstractmethod
     def print_summary(self):
-        pass
+        raise NotImplementedError
     
     @abstractmethod
     def cleanup(self):
-        pass
+        raise NotImplementedError

@@ -16,7 +16,15 @@ class TextEvaluator(Evaluator):
         self.judge_model_name:str = judge_model_name
 
 
+    def _generate_llm_responses(self, prompts):
+        raise NotImplementedError
+
+    def _get_llm_judge_score(self, responses):
+        raise NotImplementedError
+
     def run(self, prompts):
+        responses = self._generate_llm_responses(prompts)
+
         completion = self.client.chat.completions.create(
             model=self.judge_model_name,
             messages=[
