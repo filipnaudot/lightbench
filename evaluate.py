@@ -10,24 +10,27 @@ from text_evaluator import TextEvaluator
 
 
 #                 MODEL NAME                   QUANT  FEW-SHOT
-MODELS = [("meta-llama/Llama-3.2-1B-Instruct", False, False),
-          ("meta-llama/Llama-3.2-1B-Instruct", False, True),
-          ("meta-llama/Llama-3.2-1B-Instruct", True,  False),
-          ("meta-llama/Llama-3.2-1B-Instruct", True,  True),
-          ("meta-llama/Llama-3.2-3B-Instruct", False, False),
-          ("meta-llama/Llama-3.2-3B-Instruct", False, True),
+MODELS = [# ("meta-llama/Llama-3.2-1B-Instruct", False, False),
+          # ("meta-llama/Llama-3.2-1B-Instruct", False, True),
+          # ("meta-llama/Llama-3.2-1B-Instruct", True,  False),
+          # ("meta-llama/Llama-3.2-1B-Instruct", True,  True),
+          # ("meta-llama/Llama-3.2-3B-Instruct", False, False),
+          # ("meta-llama/Llama-3.2-3B-Instruct", False, True),
           ("meta-llama/Llama-3.2-3B-Instruct", True,  False),
           ("meta-llama/Llama-3.2-3B-Instruct", True,  True),
           # TODO: Check if model can run on GPU instead of manual remove
-          ("meta-llama/Llama-3.1-8B-Instruct", False, False),
-          ("meta-llama/Llama-3.1-8B-Instruct", False, True),
-          ("meta-llama/Llama-3.1-8B-Instruct", True,  False),
-          ("meta-llama/Llama-3.1-8B-Instruct", True,  True),
+          #("meta-llama/Llama-3.1-8B-Instruct", False, False),
+          #("meta-llama/Llama-3.1-8B-Instruct", False, True),
+          #("meta-llama/Llama-3.1-8B-Instruct", True,  False),
+          #("meta-llama/Llama-3.1-8B-Instruct", True,  True),
           ]
 
 
 
 
+####################################################################
+#                          Code Generation                         #
+####################################################################
 def create_coding_prompts(json_list, system_command):
     prompts = []
     for json_str in json_list:
@@ -64,19 +67,66 @@ def evaluate_code(hf_token):
         
         code_evaluator = CodeEvaluator(model, hf_token, quantize=quantize, few_shot=few_shot, verbose=False)
         code_evaluator.run(prompts)
-
         code_evaluator.print_summary()
         code_evaluator.cleanup()
         time.sleep(3)
 
 
+
+####################################################################
+#                        Question Answering                        #
+####################################################################
+def create_qa_prompts(json_list, system_command):
+    prompts = []
+    for json_str in json_list:
+        result = json.loads(json_str)
+        question = result["question"]
+        context = "".join(["".join(sentences) for para in result["context"] for sentences in para[1]])
+        answer = result["answer"]
+        
+        prompt = (
+            [
+                system_command,
+                {
+                    "role": "user",
+                    "content": f'Answer the question based on the following context: "{context}". The question is: "{question}"',
+                }
+            ],
+            answer
+        )
+        prompts.append(prompt)
+    
+    return prompts
+
+
 def evaluate_text(hf_token, openai_api_key):
-    """ NOT IMPLEMENTED.
-    """
-    text_evaluator = TextEvaluator(hf_token, openai_api_key, "NONE")
-    text_evaluator.run([])
+    start_test_line = 1
+    end_test_line = 450
+    
+    with open('./data/hotpotqa/hotpot_train_sample.jsonl', 'r') as json_file:
+        json_list = list(json_file)#[start_test_line-1:end_test_line]
+    
+    system_command = {
+        "role": "system",
+        "content": "You are a question-answering assistant. Answer the user's question based on the context provided. Respond with only the answer in a single sentence.",
+    }
+    
+    prompts = create_qa_prompts(json_list, system_command)
+    
+    # TODO: Rafactor. This runs each model 4 times but only 2 are needed since few-shot is not used here.
+    for model, quantize, _ in MODELS:
+        print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
+        text_evaluator = TextEvaluator(model, hf_token, openai_api_key, quantize=quantize, verbose=False)
+        text_evaluator.run(prompts)
+        text_evaluator.print_summary()
+        text_evaluator.cleanup()
+        time.sleep(3)
 
 
+
+####################################################################
+#                                Main                              #
+####################################################################
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Evaluation script with options to run code, text, or all evaluations.",
