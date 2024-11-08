@@ -74,7 +74,7 @@ class CodeEvaluator(Evaluator):
 
 
     def _print_test_status(self):
-        self._clear_last_row()
+        if self.num_test > 0: self._clear_last_row()
         percentage = 0
         if self.num_test > 0: percentage = (self.passed_test / self.num_test) * 100
         Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
