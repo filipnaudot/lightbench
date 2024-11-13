@@ -4,26 +4,10 @@ import json
 import argparse
 from dotenv import load_dotenv
 
+from model_configs import MODELS 
 from code_evaluator import CodeEvaluator
 from text_evaluator import TextEvaluator
 
-
-
-#                 MODEL NAME                   QUANT  FEW-SHOT
-MODELS = [("meta-llama/Llama-3.2-1B-Instruct", False, False),
-          ("meta-llama/Llama-3.2-1B-Instruct", False, True),
-          ("meta-llama/Llama-3.2-1B-Instruct", True,  False),
-          ("meta-llama/Llama-3.2-1B-Instruct", True,  True),
-          ("meta-llama/Llama-3.2-3B-Instruct", False, False),
-          ("meta-llama/Llama-3.2-3B-Instruct", False, True),
-          ("meta-llama/Llama-3.2-3B-Instruct", True,  False),
-          ("meta-llama/Llama-3.2-3B-Instruct", True,  True),
-          # TODO: Check if model can run on GPU instead of manual remove
-          ("meta-llama/Llama-3.1-8B-Instruct", False, False),
-          ("meta-llama/Llama-3.1-8B-Instruct", False, True),
-          ("meta-llama/Llama-3.1-8B-Instruct", True,  False),
-          ("meta-llama/Llama-3.1-8B-Instruct", True,  True),
-          ]
 
 
 
@@ -113,8 +97,12 @@ def evaluate_text(hf_token, openai_api_key):
     
     prompts = create_qa_prompts(json_list, system_command)
     
-    # TODO: Rafactor. This runs each model 4 times but only 2 are needed since few-shot is not used here.
+    tested_configurations = []
     for model, quantize, _ in MODELS:
+        if (model, quantize) in tested_configurations:
+            continue # This is done since few-shot is not used.
+        tested_configurations.append((model, quantize))
+
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
         text_evaluator = TextEvaluator(model, hf_token, openai_api_key, quantize=quantize, verbose=False)
         text_evaluator.run(prompts)
