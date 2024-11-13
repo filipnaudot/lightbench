@@ -143,6 +143,7 @@ class TextEvaluator(Evaluator):
             ],
             max_tokens=1,
         )
+        # TODO: Add check to see if response is within restrictions.
         verdict = llm_judge_response.choices[0].message.content
 
         indent_format = f"\033[{45}G"
