@@ -122,7 +122,6 @@ def parse_args():
         formatter_class=argparse.RawTextHelpFormatter
     )
     
-    # Define the arguments
     parser.add_argument('--code', action='store_true', help="Run code evaluation")
     parser.add_argument('--text', action='store_true', help="Run text evaluation")
     parser.add_argument('--all', action='store_true', help="Run all evaluations")
