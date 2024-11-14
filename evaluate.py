@@ -47,7 +47,7 @@ def evaluate_code(hf_token):
     prompts = create_coding_prompts(json_list, system_command)
 
     test_configurator = ModelSetupConfigurator()
-    models = test_configurator.generate_list(quantization_settings=True, few_shot_settings=True)
+    models = test_configurator.generate_list(use_quantization=True, use_few_shot=True)
     for model, quantize, few_shot in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n    few-shot: {str(few_shot)}\n")
         
@@ -100,7 +100,7 @@ def evaluate_text(hf_token, openai_api_key):
     prompts = create_qa_prompts(json_list, system_command)
     
     test_configurator = ModelSetupConfigurator()
-    models = test_configurator.generate_list(quantization_settings=True, few_shot_settings=False)
+    models = test_configurator.generate_list(use_quantization=True, use_few_shot=False)
     for model, quantize, _ in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
         text_evaluator = TextEvaluator(model, hf_token, openai_api_key, quantize=quantize, verbose=False)
