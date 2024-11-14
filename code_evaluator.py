@@ -147,8 +147,8 @@ class CodeEvaluator(Evaluator):
             prompt,
             streamer=self.streamer,
             do_sample=False,
-            temperature=1.0,
-            top_p=1,
+            temperature=1.0, # Set to 1 since we are NOT using sample
+            top_p=1,         # Set to 1 since we are NOT using sample
             max_new_tokens=512,
         )
         end_time = time.time()
