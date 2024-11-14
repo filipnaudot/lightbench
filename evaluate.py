@@ -4,7 +4,7 @@ import json
 import argparse
 from dotenv import load_dotenv
 
-from model_configs import MODELS 
+from model_setup_configurator import ModelSetupConfigurator 
 from code_evaluator import CodeEvaluator
 from text_evaluator import TextEvaluator
 
@@ -46,7 +46,9 @@ def evaluate_code(hf_token):
     
     prompts = create_coding_prompts(json_list, system_command)
 
-    for model, quantize, few_shot in MODELS:
+    test_configurator = ModelSetupConfigurator()
+    models = test_configurator.generate_list(quantization_settings=True, few_shot_settings=True)
+    for model, quantize, few_shot in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n    few-shot: {str(few_shot)}\n")
         
         code_evaluator = CodeEvaluator(model, hf_token, quantize=quantize, few_shot=few_shot, verbose=False)
@@ -66,7 +68,7 @@ def create_qa_prompts(json_list, system_command):
         result = json.loads(json_str)
         question = result["question"]
         context = "".join(["".join(sentences) for para in result["context"] for sentences in para[1]])
-        answer = result["answer"]
+        answer = None # result["answer"]
         
         prompt = (
             [
@@ -85,10 +87,10 @@ def create_qa_prompts(json_list, system_command):
 
 def evaluate_text(hf_token, openai_api_key):
     start_test_line = 1
-    end_test_line = 450
+    end_test_line = 30
     
-    with open('./data/hotpotqa/hotpot_train_sample.jsonl', 'r') as json_file:
-        json_list = list(json_file)#[start_test_line-1:end_test_line]
+    with open('./data/hotpotqa/hotpot_test_fullwiki_v1-first-500.jsonl', 'r') as json_file:
+        json_list = list(json_file)[start_test_line-1:end_test_line]
     
     system_command = {
         "role": "system",
@@ -97,12 +99,9 @@ def evaluate_text(hf_token, openai_api_key):
     
     prompts = create_qa_prompts(json_list, system_command)
     
-    tested_configurations = []
-    for model, quantize, _ in MODELS:
-        if (model, quantize) in tested_configurations:
-            continue # This is done since few-shot is not used.
-        tested_configurations.append((model, quantize))
-
+    test_configurator = ModelSetupConfigurator()
+    models = test_configurator.generate_list(quantization_settings=True, few_shot_settings=False)
+    for model, quantize, _ in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
         text_evaluator = TextEvaluator(model, hf_token, openai_api_key, quantize=quantize, verbose=False)
         text_evaluator.run(prompts)

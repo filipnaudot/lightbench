@@ -255,6 +255,6 @@ class CodeEvaluator(Evaluator):
 
         print(json.dumps(summary, indent=4))
 
-        os.makedirs("./results", exist_ok=True)
-        with open(f"./results/{self.model_name.replace('/','-')}---quantize={str(self.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
+        os.makedirs("./results/code_evaluation", exist_ok=True)
+        with open(f"./results/code_evaluation/{self.model_name.replace('/','-')}---quantize={str(self.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
             file.write(json.dumps(summary, indent=4))
