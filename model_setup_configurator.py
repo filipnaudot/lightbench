@@ -3,7 +3,7 @@ class ModelSetupConfigurator:
         self.model_names = [
             "meta-llama/Llama-3.2-1B-Instruct",
             "meta-llama/Llama-3.2-3B-Instruct",
-            "meta-llama/Llama-3.1-8B-Instruct"  # TODO: Check if model can run on GPU instead of manual removal
+            "meta-llama/Llama-3.1-8B-Instruct"  # TODO: Implement check if model can run on GPU
         ]
 
     def generate_list(self, use_quantization=False, use_few_shot=False):
