@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from model_setup_configurator import ModelSetupConfigurator 
 from code_evaluator import CodeEvaluator
 from text_evaluator import TextEvaluator
+from llm_judge import LLMJudge
 
 
 
@@ -99,11 +100,13 @@ def evaluate_text(hf_token, openai_api_key):
     
     prompts = create_qa_prompts(json_list, system_command)
     
+    judge = LLMJudge(openai_api_key=openai_api_key)
+
     test_configurator = ModelSetupConfigurator()
     models = test_configurator.generate_list(use_quantization=True, use_few_shot=False)
     for model, quantize, _ in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
-        text_evaluator = TextEvaluator(model, hf_token, openai_api_key, quantize=quantize, verbose=False)
+        text_evaluator = TextEvaluator(model, hf_token, judge, quantize=quantize, verbose=False)
         text_evaluator.run(prompts)
         text_evaluator.print_summary()
         text_evaluator.cleanup()
