@@ -31,7 +31,7 @@ class TextEvaluator(Evaluator):
         self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
         self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
 
-        self.streamer:TextIteratorStreamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
+        self.streamer:TextIteratorStreamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=None)
 
         if self.quantize:
             self.model = self._load_quantized_model()
@@ -51,6 +51,7 @@ class TextEvaluator(Evaluator):
 
     def _handle_stream_output(self, streamer, start_time, ttft_list, print_stream=False):
         first_token = True
+        # IMPORTANT: streamers 'timeout' has to be None for this to work
         for token in streamer:
             if first_token:
                 ttft = time.time() - start_time
