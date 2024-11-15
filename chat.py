@@ -1,6 +1,5 @@
 import os
 import time
-from queue import Queue
 import threading
 
 from dotenv import load_dotenv
@@ -34,7 +33,7 @@ def load_quantized_model(model_id):
     return model
 
 
-def print_stream_output(streamer, queue, start_time, ttft_list):
+def print_stream_output(streamer, start_time, ttft_list):
     first_token = True
     for token in streamer:
         if first_token:
@@ -43,7 +42,6 @@ def print_stream_output(streamer, queue, start_time, ttft_list):
             first_token = False
         
         print(f"{token}", end='', flush=True)
-        queue.put(token)
 
 
 def main(stream: bool = False, QUANTIZE: bool = False):
@@ -74,7 +72,6 @@ def main(stream: bool = False, QUANTIZE: bool = False):
     ]
     
     streamer = TextIteratorStreamer(tokenizer, skip_prompt=True)
-    queue = Queue()
 
     #################
     ### Chat loop ###
@@ -95,7 +92,7 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         ttft_list = []
         start_time = time.time()
         if stream:
-            streaming_thread = threading.Thread(target=print_stream_output, args=(streamer, queue, start_time, ttft_list))
+            streaming_thread = threading.Thread(target=print_stream_output, args=(streamer, start_time, ttft_list))
             streaming_thread.start()
 
         generation = generator(
