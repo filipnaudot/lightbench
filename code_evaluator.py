@@ -9,10 +9,11 @@ import json
 
 
 import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 from utils import Printer
 from evaluator import Evaluator
+from ttft import TTFT
 
 class CodeEvaluator(Evaluator):
     def __init__(self, model_name, hf_token, quantize=False, few_shot=False, verbose=False):
@@ -32,8 +33,6 @@ class CodeEvaluator(Evaluator):
 
         self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
         self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
-
-        self.streamer:TextIteratorStreamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
 
         if self.quantize:
             self.model = self._load_quantized_model()
@@ -80,18 +79,6 @@ class CodeEvaluator(Evaluator):
         Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
 
 
-    def _handle_stream_output(self, streamer, start_time, ttft_list, print_stream=False):
-        first_token = True
-        for token in streamer:
-            if first_token:
-                ttft = time.time() - start_time
-                ttft_list.append(ttft)
-                first_token = False
-            
-            if print_stream:
-                print(f"{token}", end='', flush=True)
-
-
     def _preprocess_data(self, data):
         if f"```python" in data:
             data = data[data.find(f"```python") + len(f"```python"):]
@@ -135,17 +122,18 @@ class CodeEvaluator(Evaluator):
     
 
     def _generate_response(self, prompt):
-        ttft_list = []
         torch.cuda.reset_peak_memory_stats()
+
+        ttft_handler = TTFT(self.tokenizer)
         
         start_time = time.time()
 
-        streaming_thread = threading.Thread(target=self._handle_stream_output, args=(self.streamer, start_time, ttft_list))
+        streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
         streaming_thread.start()
 
         generation = self.generator(
             prompt,
-            streamer=self.streamer,
+            streamer=ttft_handler.streamer,
             do_sample=False,
             temperature=1.0, # Set to 1 since we are NOT using sample
             top_p=1,         # Set to 1 since we are NOT using sample
@@ -161,10 +149,10 @@ class CodeEvaluator(Evaluator):
         peak_memory_usage = torch.cuda.max_memory_allocated() / (1024 ** 3)
 
         self.inference_time_list.append((end_time-start_time))
-        self.ttft_list.append(ttft_list[-1])
+        self.ttft_list.append(ttft_handler.ttft)
         self.memory_usage_list.append(peak_memory_usage)
 
-        return response, (end_time-start_time), ttft_list[-1], peak_memory_usage
+        return response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage
     
     
     def _create_few_shot_prompt(self, prompt, response, message):
@@ -215,7 +203,6 @@ class CodeEvaluator(Evaluator):
         del self.generator
         del self.tokenizer
         del self.model
-        del self.streamer
         gc.collect()
 
         torch.cuda.empty_cache()

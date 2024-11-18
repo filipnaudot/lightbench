@@ -1,16 +1,16 @@
 import os
 import threading
 import time
-import random
 import gc
 import json
 
 import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 from utils import Printer
 from evaluator import Evaluator
 from llm_judge import LLMJudge
+from ttft import TTFT
 
 
 class TextEvaluator(Evaluator):
@@ -46,14 +46,6 @@ class TextEvaluator(Evaluator):
             pad_token_id=self.tokenizer.eos_token_id,
             token=self.hf_token,
         )
-
-
-    def _handle_stream_output(self, streamer, start_time, ttft_list, print_stream=False):
-        # IMPORTANT: streamers 'timeout' has to be None for this to work
-        for _ in streamer:
-            ttft = time.time() - start_time
-            ttft_list.append(ttft)
-            break
             
 
     def _load_quantized_model(self):
@@ -86,18 +78,18 @@ class TextEvaluator(Evaluator):
 
 
     def _generate_response(self, prompt):
-        ttft_list = []
         torch.cuda.reset_peak_memory_stats()
-        # Create new TextIteratorStreamer to ensure the stream queue is completely flushed
-        streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True, timeout=None)
+
+        ttft_handler = TTFT(self.tokenizer)
+
         start_time = time.time()
 
-        streaming_thread = threading.Thread(target=self._handle_stream_output, args=(streamer, start_time, ttft_list))
+        streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
         streaming_thread.start()
 
         generation = self.generator(
             prompt,
-            streamer=streamer,
+            streamer=ttft_handler.streamer,
             do_sample=False,
             temperature=1.0,
             top_p=1,
@@ -113,10 +105,10 @@ class TextEvaluator(Evaluator):
         peak_memory_usage = torch.cuda.max_memory_allocated() / (1024 ** 3)
 
         self.inference_time_list.append((end_time-start_time))
-        self.ttft_list.append(ttft_list[-1])
+        self.ttft_list.append(ttft_handler.ttft)
         self.memory_usage_list.append(peak_memory_usage)
 
-        return response, (end_time-start_time), ttft_list[-1], peak_memory_usage
+        return response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage
     
 
     def _get_llm_judge_score(self, response, prompt):
@@ -184,7 +176,6 @@ class TextEvaluator(Evaluator):
         del self.generator
         del self.tokenizer
         del self.model
-        del self.streamer
         gc.collect()
 
         torch.cuda.empty_cache()
