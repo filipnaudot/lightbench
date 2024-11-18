@@ -95,15 +95,15 @@ def evaluate_text(hf_token, openai_api_key):
     
     system_command = {
         "role": "system",
-        "content": "You are a question-answering assistant. Answer the user's question based on the context provided. Respond with only the answer in a single sentence.",
+        "content": "You are a question-answering assistant. Answer the user's question based on the provided context. Respond with only the answer in a single sentence.",
     }
     
     prompts = create_qa_prompts(json_list, system_command)
     
     judge = LLMJudge(openai_api_key=openai_api_key)
 
-    test_configurator = ModelSetupConfigurator()
-    models = test_configurator.generate_list(use_quantization=True, use_few_shot=False)
+    model_setup_conf = ModelSetupConfigurator()
+    models = model_setup_conf.generate_list(use_quantization=True, use_few_shot=False)
     for model, quantize, _ in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
         text_evaluator = TextEvaluator(model, hf_token, judge, quantize=quantize, verbose=False)
