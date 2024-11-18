@@ -31,7 +31,6 @@ class TextEvaluator(Evaluator):
         self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
         self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
 
-        self.streamer:TextIteratorStreamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, timeout=None)
 
         if self.quantize:
             self.model = self._load_quantized_model()
@@ -50,17 +49,12 @@ class TextEvaluator(Evaluator):
 
 
     def _handle_stream_output(self, streamer, start_time, ttft_list, print_stream=False):
-        first_token = True
         # IMPORTANT: streamers 'timeout' has to be None for this to work
-        for token in streamer:
-            if first_token:
-                ttft = time.time() - start_time
-                ttft_list.append(ttft)
-                first_token = False
+        for _ in streamer:
+            ttft = time.time() - start_time
+            ttft_list.append(ttft)
+            break
             
-            if print_stream:
-                print(f"{token}", end='', flush=True)
-
 
     def _load_quantized_model(self):
         print("Loading quantized model...")
@@ -94,15 +88,16 @@ class TextEvaluator(Evaluator):
     def _generate_response(self, prompt):
         ttft_list = []
         torch.cuda.reset_peak_memory_stats()
-        
+        # Create new TextIteratorStreamer to ensure the stream queue is completely flushed
+        streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True, timeout=None)
         start_time = time.time()
 
-        streaming_thread = threading.Thread(target=self._handle_stream_output, args=(self.streamer, start_time, ttft_list))
+        streaming_thread = threading.Thread(target=self._handle_stream_output, args=(streamer, start_time, ttft_list))
         streaming_thread.start()
 
         generation = self.generator(
             prompt,
-            streamer=self.streamer,
+            streamer=streamer,
             do_sample=False,
             temperature=1.0,
             top_p=1,
