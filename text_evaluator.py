@@ -10,7 +10,7 @@ from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndB
 from utils import Printer
 from evaluator import Evaluator
 from llm_judge import LLMJudge
-from ttft import TTFT
+from metrics import TTFT, VRAM
 
 
 class TextEvaluator(Evaluator):
@@ -78,15 +78,13 @@ class TextEvaluator(Evaluator):
 
 
     def _generate_response(self, prompt):
-        torch.cuda.reset_peak_memory_stats()
-
+        vram_handler = VRAM()
         ttft_handler = TTFT(self.tokenizer)
 
         start_time = time.time()
 
         streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
         streaming_thread.start()
-
         generation = self.generator(
             prompt,
             streamer=ttft_handler.streamer,
@@ -96,13 +94,10 @@ class TextEvaluator(Evaluator):
             max_new_tokens=512,
         )
         end_time = time.time()
-
         streaming_thread.join()
-        
-        response = generation[0]['generated_text'][-1]['content']
 
-        # Measure peak GPU memory usage (in GB)
-        peak_memory_usage = torch.cuda.max_memory_allocated() / (1024 ** 3)
+        response = generation[0]['generated_text'][-1]['content']
+        peak_memory_usage = vram_handler.measure_vram()
 
         self.inference_time_list.append((end_time-start_time))
         self.ttft_list.append(ttft_handler.ttft)

@@ -1,5 +1,6 @@
-
 import time
+
+import torch
 from transformers import TextIteratorStreamer
 
 
@@ -14,3 +15,15 @@ class TTFT:
         for _ in self.streamer:
             self.ttft = time.time() - start_time
             break
+
+
+class VRAM:
+    def __init__(self) -> None:
+        self.reset()
+
+    def reset(self):
+        torch.cuda.reset_peak_memory_stats()
+
+    def measure_vram(self):
+        # Measure peak GPU memory usage (in GB)
+        return torch.cuda.max_memory_allocated() / (1024 ** 3)
