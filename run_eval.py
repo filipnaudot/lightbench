@@ -88,7 +88,7 @@ def create_qa_prompts(json_list, system_command):
 
 def evaluate_text(hf_token, openai_api_key):
     start_test_line = 1
-    end_test_line = 30
+    end_test_line = 100
     
     with open('./data/hotpotqa/hotpot_test_fullwiki_v1-first-500.jsonl', 'r') as json_file:
         json_list = list(json_file)[start_test_line-1:end_test_line]
