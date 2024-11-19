@@ -51,5 +51,9 @@ pip3 install bitsandbytes
 pip3 install 'accelerate>=0.26.0'
 ```
 
+```bash
+pip3 install nvidia-ml-py
+```
+
 ## Paper
 ***Efficient LLMs: A Study in Resource Reduction***
