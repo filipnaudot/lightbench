@@ -31,16 +31,16 @@ This framework supports automatic evaluation for:
 
 
 ## Getting Started
-1. Install the required dependencies by running the following commands:
+**1. Install the required dependencies by running the following commands:**
 ```bash
 bash install_dependencies.sh
 ```
 
-2. Activating the Virtual Environment
+**2. Activating the Virtual Environment**
 
 After running the installation script, you can activate the virtual environment using the command provided at the end of the script.
 
-3. Creating the .env File
+**3. Creating the .env File**
 
 To enable the framework to function correctly, you need to create a .env file in the root directory of the project. The file should include the following keys:
 ```bash
