@@ -7,13 +7,11 @@ import threading
 import signal
 import json
 
-
-import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
-
 from utils import Printer
 from evaluator import Evaluator
 from metrics import TTFT, VRAM
+from model_loaders import LLamaModelLoader
+
 
 class CodeEvaluator(Evaluator):
     def __init__(self, model_name, hf_token, quantize=False, few_shot=False, verbose=False):
@@ -31,38 +29,7 @@ class CodeEvaluator(Evaluator):
         self.num_test:int = 0
         self.passed_test:int = 0
 
-        self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
-        self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
-
-        if self.quantize:
-            self.model = self._load_quantized_model()
-        else:
-            self.model = model_name
-
-        self.generator = pipeline(
-            "text-generation",
-            model=self.model,
-            tokenizer=self.tokenizer,
-            torch_dtype=torch.bfloat16,
-            device_map="auto",
-            pad_token_id=self.tokenizer.eos_token_id,
-            token=self.hf_token,
-        )
-
-
-    def _load_quantized_model(self):
-        print("Loading quantized model...")
-        bnb_config = BitsAndBytesConfig(load_in_4bit=True)
-
-        model = AutoModelForCausalLM.from_pretrained(
-            self.model_name,
-            quantization_config=bnb_config,
-            device_map="auto",
-            torch_dtype=torch.bfloat16,
-        )
-
-        return model
-
+        self.model_loader = LLamaModelLoader(model_name, quantize, hf_token)
 
     def _clear_last_row(self):
         print(f"\r{' ' * 40}\r", end='', flush=True) # Clear last line
@@ -123,13 +90,12 @@ class CodeEvaluator(Evaluator):
 
     def _generate_response(self, prompt):
         vram_handler = VRAM()
-        ttft_handler = TTFT(self.tokenizer)
+        ttft_handler = TTFT(self.model_loader.tokenizer)
         
         start_time = time.time()
-
         streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
         streaming_thread.start()
-        generation = self.generator(
+        generation = self.model_loader.generator(
             prompt,
             streamer=ttft_handler.streamer,
             do_sample=False,
@@ -195,12 +161,10 @@ class CodeEvaluator(Evaluator):
     
 
     def cleanup(self):        
-        del self.generator
-        del self.tokenizer
-        del self.model
+        self.model_loader.cleanup()
+        del self.model_loader
+        self.model_loader = None
         gc.collect()
-
-        torch.cuda.empty_cache()
 
 
     def print_summary(self):
