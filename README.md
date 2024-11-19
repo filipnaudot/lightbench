@@ -31,18 +31,16 @@ This framework supports automatic evaluation for:
 
 
 ## Getting Started
-1. Download the appropriate PyTorch version for your system using the **[Start Locally](https://pytorch.org/get-started/locally/)** guide.
-
-2. Install the required dependencies by running the following commands:
+1. Install the required dependencies by running the following commands:
 ```bash
 bash install_dependencies.sh
 ```
 
-3. Activating the Virtual Environment
+2. Activating the Virtual Environment
 
 After running the installation script, you can activate the virtual environment using the command provided at the end of the script.
 
-4. Creating the .env File
+3. Creating the .env File
 
 To enable the framework to function correctly, you need to create a .env file in the root directory of the project. The file should include the following keys:
 ```bash
@@ -59,24 +57,3 @@ MODEL_NAME=
 
 ## Paper
 ***Efficient LLMs: A Study in Resource Reduction***
-
-## TEMP
-```bash
-pip3 install transformers
-```
-
-```bash
-pip3 install python-dotenv
-```
-
-```bash
-pip3 install bitsandbytes
-```
-
-```bash
-pip3 install 'accelerate>=0.26.0'
-```
-
-```bash
-pip3 install nvidia-ml-py
-```
