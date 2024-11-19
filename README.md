@@ -15,10 +15,20 @@
 
 # LLM Benchmark Framework
 
-## Chat example
+## Human Evaluation
+Human evaluation is straightforward with the interactive chat interface, enabling users to interact with the model in real-time and assess its responses in a conversational setting.
+
+### Chat Example
 Example of a chat using [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct), running on a GTX 1080 TI.
 
 ![Demo of Terminal Chat Interface](./readme_assets/demo.gif)
+
+
+## Automatic Evaluations
+This framework supports automatic evaluation for:
+1. **Code Generation**: Measure the model's ability to generate syntactically correct and functional code.
+2. **Text Generation (Question Answering)**: Evaluate the model's performance in answering questions using the LLM-as-a-judge technique.
+
 
 ## Getting Started
 1. Download the appropriate PyTorch version for your system using the **[Start Locally](https://pytorch.org/get-started/locally/)** guide.
