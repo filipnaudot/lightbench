@@ -42,6 +42,20 @@ bash install_dependencies.sh
 
 After running the installation script, you can activate the virtual environment using the command provided at the end of the script.
 
+4. Creating the .env File
+
+To enable the framework to function correctly, you need to create a .env file in the root directory of the project. The file should include the following keys:
+```bash
+OPENAI_API_KEY=
+HUGGINGFACE_TOKEN=
+MODEL_NAME=
+```
+`OPENAI_API_KEY`: Your OpenAI API key, required for text evaluation.
+
+`HUGGINGFACE_TOKEN`: Your Hugging Face token, used for all evaluations if you are not using your own model loader.
+
+`MODEL_NAME`: Specifies the model to use in the chat.py script for interactive chat.
+
 
 ## Paper
 ***Efficient LLMs: A Study in Resource Reduction***
