@@ -9,7 +9,7 @@ import json
 
 from utils import Printer
 from evaluator import Evaluator
-from metrics import TTFT, VRAM
+from metrics import TTFT, VRAM, PowerUsage
 from model_loaders import LLamaModelLoader
 
 
@@ -25,6 +25,7 @@ class CodeEvaluator(Evaluator):
         self.inference_time_list:list[float] = []
         self.ttft_list:list[float] = []
         self.memory_usage_list:list[float] = []
+        self.power_usage_list:list[float] = []
 
         self.num_test:int = 0
         self.passed_test:int = 0
@@ -34,9 +35,16 @@ class CodeEvaluator(Evaluator):
     def _clear_last_row(self):
         print(f"\r{' ' * 40}\r", end='', flush=True) # Clear last line
     
-    def _print_test_metrics(self, index, inference_time, ttft, memory_usage):
+    def _print_test_metrics(self, index, inference_time, ttft, memory_usage, power_usage):
         self._clear_last_row()
-        print(f"\r{index+1} ({inference_time:.2f}s, TTFT: {ttft:.2f}s, Memory: {memory_usage:.2f} GB) ", end='')
+        print(
+            f"\r{index+1} "
+            f"({inference_time:.2f}s, "
+            f"TTFT: {ttft:.2f}s, "
+            f"Memory: {memory_usage:.2f} GB, "
+            f"Power: {int(power_usage)}W) ",
+            end=''
+            )
 
 
     def _print_test_status(self):
@@ -58,7 +66,7 @@ class CodeEvaluator(Evaluator):
 
 
     def _validate_code(self, code, test, shots):
-        indent_format = f"\033[{50}G" if shots > 0 else f"\033[{45}G"
+        indent_format = f"\033[{65}G" if shots > 0 else f"\033[{60}G"
         end = "" if self.verbose else "\n"
 
         full_code_to_execute = f"{code}\n\n{test}"
@@ -91,7 +99,9 @@ class CodeEvaluator(Evaluator):
     def _generate_response(self, prompt):
         vram_handler = VRAM()
         ttft_handler = TTFT(self.model_loader.tokenizer)
-        
+        power_handler = PowerUsage()
+        power_handler.measure_power()
+
         start_time = time.time()
         streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
         streaming_thread.start()
@@ -105,15 +115,18 @@ class CodeEvaluator(Evaluator):
         )
         end_time = time.time()
         streaming_thread.join()
-        
+        power_handler.measure_power()
+
         response = generation[0]['generated_text'][-1]['content']
         peak_memory_usage = vram_handler.measure_vram()
 
         self.inference_time_list.append((end_time-start_time))
         self.ttft_list.append(ttft_handler.ttft)
         self.memory_usage_list.append(peak_memory_usage)
+        self.power_usage_list.append(power_handler.get_average())
+        power_handler.kill()
 
-        return response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage
+        return response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage, power_handler.get_average()
     
     
     def _create_few_shot_prompt(self, prompt, response, message):
@@ -132,8 +145,8 @@ class CodeEvaluator(Evaluator):
 
     def run(self, prompts):
         for index, (prompt, test) in enumerate(prompts):
-            response, inference_time, ttft, memory_usage = self._generate_response(prompt)
-            self._print_test_metrics(index, inference_time, ttft, memory_usage)
+            response, inference_time, ttft, memory_usage, power_usage = self._generate_response(prompt)
+            self._print_test_metrics(index, inference_time, ttft, memory_usage, power_usage)
             extracted_code = self._preprocess_data(response).strip()
             passed, message = self._validate_code(extracted_code, test, 0)
 
@@ -144,8 +157,8 @@ class CodeEvaluator(Evaluator):
                 while not passed and shots <= 2:
                     self._print_test_status()
 
-                    response, inference_time, ttft, memory_usage = self._generate_response(prompt)
-                    self._print_test_metrics(index, inference_time, ttft, memory_usage)
+                    response, inference_time, ttft, memory_usage, power_usage = self._generate_response(prompt)
+                    self._print_test_metrics(index, inference_time, ttft, memory_usage, power_usage)
                     extracted_code = self._preprocess_data(response).strip()
                     passed, message = self._validate_code(extracted_code, test, shots)
 
@@ -183,6 +196,11 @@ class CodeEvaluator(Evaluator):
         else:
             avg_memory_usage = 0.0
 
+        if len(self.power_usage_list) > 0:
+            avg_power_usage = sum(self.power_usage_list) / len(self.power_usage_list)
+        else:
+            avg_power_usage = 0.0
+
         if self.num_test > 0:
             passed_percentage = (self.passed_test / self.num_test) * 100
         else:
@@ -191,9 +209,10 @@ class CodeEvaluator(Evaluator):
         summary = {
             "quantize": str(self.quantize),
             "few_shot": str(self.few_shot),
-            "average_inference_time": round(avg_inference_time, 2),
-            "average_ttft": round(avg_ttft, 2),
-            "average_mem_usage": round(avg_memory_usage, 2),
+            "average_inference_time_sec": round(avg_inference_time, 2),
+            "average_ttft_sec": round(avg_ttft, 2),
+            "average_mem_usage_GB": round(avg_memory_usage, 2),
+            "average_power_usage_W": round(avg_power_usage, 2),
             "passed_tests": self.passed_test,
             "total_tests": self.num_test,
             "passed_percentage": round(passed_percentage, 2)

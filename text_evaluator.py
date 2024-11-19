@@ -9,7 +9,7 @@ import torch
 from utils import Printer
 from evaluator import Evaluator
 from llm_judge import LLMJudge
-from metrics import TTFT, VRAM
+from metrics import TTFT, VRAM, PowerUsage
 from model_loaders import LLamaModelLoader
 
 
@@ -26,6 +26,7 @@ class TextEvaluator(Evaluator):
         self.inference_time_list:list[float] = []
         self.ttft_list:list[float] = []
         self.memory_usage_list:list[float] = []
+        self.power_usage_list:list[float] = []
         self.llm_judge_score_list:list[int] = []
 
         self.model_loader = LLamaModelLoader(model_name, quantize, hf_token)
@@ -34,9 +35,16 @@ class TextEvaluator(Evaluator):
     def _clear_last_row(self):
         print(f"\r{' ' * 40}\r", end='', flush=True) # Clear last line
     
-    def _print_test_metrics(self, index, inference_time, ttft, memory_usage):
+    def _print_test_metrics(self, index, inference_time, ttft, memory_usage, power_usage):
         self._clear_last_row()
-        print(f"\r{index+1} ({inference_time:.2f}s, TTFT: {ttft:.2f}s, Memory: {memory_usage:.2f} GB) ", end='')
+        print(
+            f"\r{index+1} "
+            f"({inference_time:.2f}s, "
+            f"TTFT: {ttft:.2f}s, "
+            f"Memory: {memory_usage:.2f} GB, "
+            f"Power: {int(power_usage)}W) ",
+            end=''
+            )
 
 
     def _print_test_status(self):
@@ -49,6 +57,8 @@ class TextEvaluator(Evaluator):
     def _generate_response(self, prompt):
         vram_handler = VRAM()
         ttft_handler = TTFT(self.model_loader.tokenizer)
+        power_handler = PowerUsage()
+        power_handler.measure_power()
 
         start_time = time.time()
         streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
@@ -63,6 +73,7 @@ class TextEvaluator(Evaluator):
         )
         end_time = time.time()
         streaming_thread.join()
+        power_handler.measure_power()
 
         response = generation[0]['generated_text'][-1]['content']
         peak_memory_usage = vram_handler.measure_vram()
@@ -70,15 +81,18 @@ class TextEvaluator(Evaluator):
         self.inference_time_list.append((end_time-start_time))
         self.ttft_list.append(ttft_handler.ttft)
         self.memory_usage_list.append(peak_memory_usage)
+        self.power_usage_list.append(power_handler.get_average())
+        power_handler.kill()
 
-        return response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage
+
+        return response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage, power_handler.get_average()
     
 
     def _get_llm_judge_score(self, response, prompt):
         # print(f"PROMPT:\n{prompt}\n\nRESPONS:\n{response}\n\n")
         score = self.judge.get_score(prompt, response)
 
-        indent_format = f"\033[{45}G"
+        indent_format = f"\033[{60}G"
         Printer.print_yellow(f"{indent_format} {score}", end='\n')
         
         return score
@@ -86,8 +100,8 @@ class TextEvaluator(Evaluator):
 
     def run(self, prompts):
         for index, (prompt, refrence_answer) in enumerate(prompts):
-            response, inference_time, ttft, memory_usage = self._generate_response(prompt)
-            self._print_test_metrics(index, inference_time, ttft, memory_usage)
+            response, inference_time, ttft, memory_usage, power_usage = self._generate_response(prompt)
+            self._print_test_metrics(index, inference_time, ttft, memory_usage, power_usage)
             
             score = self._get_llm_judge_score(response, prompt)
             self.llm_judge_score_list.append(score)
@@ -113,6 +127,11 @@ class TextEvaluator(Evaluator):
         else:
             avg_memory_usage = 0.0
         
+        if len(self.power_usage_list) > 0:
+            avg_power_usage = sum(self.power_usage_list) / len(self.power_usage_list)
+        else:
+            avg_power_usage = 0.0
+        
         if len(self.llm_judge_score_list) > 0:
             avg_score = (sum(self.llm_judge_score_list) / len(self.llm_judge_score_list))
         else:
@@ -121,9 +140,10 @@ class TextEvaluator(Evaluator):
 
         summary = {
             "quantize": str(self.quantize),
-            "average_inference_time": round(avg_inference_time, 2),
-            "average_ttft": round(avg_ttft, 2),
-            "average_mem_usage": round(avg_memory_usage, 2),
+            "average_inference_time_sec": round(avg_inference_time, 2),
+            "average_ttft_sec": round(avg_ttft, 2),
+            "average_mem_usage_GB": round(avg_memory_usage, 2),
+            "average_power_usage_W": round(avg_power_usage, 2),
             "total_tests": self.num_test,
             "avg_score": round(avg_score, 2)
         }
