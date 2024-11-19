@@ -1,7 +1,7 @@
 <div align='center'>
     <picture>
-        <source media="(prefers-color-scheme: light)" srcset="/readme_assets/lightbench_logo_lightmode.jpg">
-        <img alt="lighbench logo" src="/readme_assets/lightbench_logo_darkmode.jpg" width="50%" height="50%">
+        <source media="(prefers-color-scheme: light)" srcset="/readme_assets/lightbench_logo_lightmode.png">
+        <img alt="lighbench logo" src="/readme_assets/lightbench_logo_darkmode.png" width="50%" height="50%">
     </picture>
     <p>
         <img src="https://img.shields.io/badge/Ubuntu-20.04-orange">
