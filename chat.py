@@ -4,10 +4,28 @@ import threading
 
 from dotenv import load_dotenv
 import torch
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
+from transformers import AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
 from utils import Colors
+from model_loaders import LLamaModelLoader
 
+
+
+class ChatStreamHandler:
+    def __init__(self, tokenizer) -> None:
+        self.tokenizer = tokenizer
+        self.streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True, timeout=None)
+        self.ttft_list = [0]
+    
+    def stream(self, start_time):
+        first_token = True
+        # IMPORTANT: streamers 'timeout' has to be None for this to work
+        for token in self.streamer:
+            if first_token: self.ttft_list.append(time.time() - start_time) ; first_token = False
+            print(f"{token}", end='', flush=True)
+    
+    def get_ttft(self):
+        return self.ttft_list[-1]
 
 
 def load_env_variables():
@@ -33,36 +51,12 @@ def load_quantized_model(model_id):
     return model
 
 
-def print_stream_output(streamer, start_time, ttft_list):
-    first_token = True
-    for token in streamer:
-        if first_token:
-            ttft = time.time() - start_time
-            ttft_list.append(ttft)
-            first_token = False
-        
-        print(f"{token}", end='', flush=True)
-
-
-def main(stream: bool = False, QUANTIZE: bool = False):
+def main(stream: bool, quantize: bool):
 
     model_id, hf_token = load_env_variables()
-    tokenizer = AutoTokenizer.from_pretrained(model_id, token=hf_token)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model_loader = LLamaModelLoader(model_id, quantize, hf_token)
+    stream_handler = ChatStreamHandler(model_loader.tokenizer)
 
-    model = model_id
-    if QUANTIZE:
-        model = load_quantized_model(model_id)
-
-    generator = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        torch_dtype=torch.bfloat16,
-        device_map="auto",
-        pad_token_id=tokenizer.eos_token_id,
-        token=hf_token,
-    )
 
     conversation_history = [
         {
@@ -71,8 +65,6 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         }
     ]
     
-    streamer = TextIteratorStreamer(tokenizer, skip_prompt=True)
-
     #################
     ### Chat loop ###
     #################
@@ -89,32 +81,26 @@ def main(stream: bool = False, QUANTIZE: bool = False):
         
         print(f"\n{Colors.WHITE_TEXT + Colors.BACKGROUND_GRAY}Bot:{Colors.RESET} ", end='')
         
-        ttft_list = []
         start_time = time.time()
         if stream:
-            streaming_thread = threading.Thread(target=print_stream_output, args=(streamer, start_time, ttft_list))
+            streaming_thread = threading.Thread(target=stream_handler.stream, args=(start_time,))
             streaming_thread.start()
 
-        generation = generator(
+        generation = model_loader.generator(
             conversation_history,
-            streamer=streamer if stream else None,
-            do_sample=False,
-            temperature=1.0,
-            top_p=1,
+            streamer=stream_handler.streamer if stream else None,
+            do_sample=True,
+            temperature=0.6,
+            top_p=0.6,
             max_new_tokens=512,
         )
         end_time = time.time()
-
-        if stream:
-            streaming_thread.join()
+        if stream: streaming_thread.join()
         
         response = generation[0]['generated_text'][-1]['content']
+        if not stream: print(f"{response}")
         
-        if not stream:
-            print(f"{response}")
-        
-        ttft = ttft_list[-1] if stream else 0
-        print(f"\n\n({end_time - start_time:.2f}s TTFT: {ttft:.2f}s)\n")
+        print(f"\n\n({end_time - start_time:.2f}s TTFT: {stream_handler.get_ttft():.2f}s)\n")
 
         conversation_history.append({
             "role": "assistant", 
@@ -123,4 +109,4 @@ def main(stream: bool = False, QUANTIZE: bool = False):
 
 
 if __name__ == "__main__":
-    main(stream=True, QUANTIZE=False)
+    main(stream=True, quantize=False)
