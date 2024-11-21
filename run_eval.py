@@ -4,7 +4,7 @@ import json
 import argparse
 from dotenv import load_dotenv
 
-from model_setup_configurator import ModelSetupConfigurator 
+from configurators.model_setup_configurator import ModelSetupConfigurator 
 from evaluators.code_evaluator import CodeEvaluator
 from evaluators.text_evaluator import TextEvaluator
 from metrics.llm_judge import LLMJudge
