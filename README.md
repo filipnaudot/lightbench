@@ -56,4 +56,4 @@ MODEL_NAME=
 
 
 ## Paper
-***Efficient LLMs: A Study in Resource Reduction***
+***LLMs and Efficiency: A Study in Computational Demands*** (Work in progress)
