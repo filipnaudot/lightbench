@@ -7,10 +7,10 @@ import json
 import torch
 
 from utils import Printer
-from evaluator import Evaluator
-from llm_judge import LLMJudge
-from metrics import TTFT, VRAM, PowerUsage
-from model_loaders import LLamaModelLoader
+from evaluators.evaluator import Evaluator
+from metrics.llm_judge import LLMJudge
+from metrics.metrics import TTFT, VRAM, PowerUsage
+from loaders.model_loaders import LLamaModelLoader
 
 
 class TextEvaluator(Evaluator):

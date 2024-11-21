@@ -8,9 +8,9 @@ import signal
 import json
 
 from utils import Printer
-from evaluator import Evaluator
-from metrics import TTFT, VRAM, PowerUsage
-from model_loaders import LLamaModelLoader
+from evaluators.evaluator import Evaluator
+from metrics.metrics import TTFT, VRAM, PowerUsage
+from loaders.model_loaders import LLamaModelLoader
 
 
 class CodeEvaluator(Evaluator):

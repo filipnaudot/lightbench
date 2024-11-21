@@ -7,7 +7,7 @@ import torch
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
 from utils import Colors
-from model_loaders import LLamaModelLoader
+from loaders.model_loaders import LLamaModelLoader
 
 
 

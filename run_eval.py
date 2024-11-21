@@ -5,9 +5,9 @@ import argparse
 from dotenv import load_dotenv
 
 from model_setup_configurator import ModelSetupConfigurator 
-from code_evaluator import CodeEvaluator
-from text_evaluator import TextEvaluator
-from llm_judge import LLMJudge
+from evaluators.code_evaluator import CodeEvaluator
+from evaluators.text_evaluator import TextEvaluator
+from metrics.llm_judge import LLMJudge
 
 
 
