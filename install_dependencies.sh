@@ -73,6 +73,7 @@ pip install bitsandbytes
 pip install 'accelerate>=0.26.0'
 pip install nvidia-ml-py
 pip install openai
+pip install fastapi uvicorn
 
 echo "All dependencies have been installed successfully."
 
