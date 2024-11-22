@@ -81,7 +81,7 @@ The API responds with a JSON object containing the generated text:
     "response": "The capital of France is Paris."
 }
 ```
-Here, `generation` contains the formatted full-context response. And `response` contains the string version of the latest model response.
+Here, `generation` contains the formatted full-context response. And `response` contains the string version of the most recent model response.
 
 ---
 
