@@ -2,7 +2,7 @@
 
 ## Overview
 
-This API provides an interface for interacting with a language model capable of generating responses based on structured conversational prompts. It is designed to accept a sequence of messages in a structured format, process them, and return a coherent response from the model.
+This API provides an interface for interacting with a LLM capable of generating responses based on structured conversational prompts.
 
 ---
 
@@ -102,7 +102,30 @@ curl -X POST "http://127.0.0.1:8000/generate/" -H "Content-Type: application/jso
 
 ---
 
+## Prompt Format
+
+The API utilizes a structured prompt format. Each prompt is a list of message objects, where each object includes a `role` and `content` field:
+
+- **`role`**: Specifies the sender of the message. Supported roles include:
+  - `"system"`: Used to define the behavior or persona of the assistant.
+  - `"user"`: Represents the user's input or query.
+  - `"assistant"`: Contains the assistant's response (used in historical context).
+
+- **`content`**: Contains the actual text of the message.
+
+### Example Prompt
+```python
+prompt = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "What is the capital of France?"},
+    {"role": "assistant", "content": "The capital of France is Paris."}
+]
+```
+
+
+---
+
 ### Python Example
-A Python example is available in `mwe.py`
+A Python example using the API is available in `mwe.py`
 
 ---
