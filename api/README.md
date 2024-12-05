@@ -1,9 +1,5 @@
 # API Documentation
 
-## Overview
-
-This API provides an interface for interacting with a LLM capable of generating responses based on structured conversational prompts.
-
 ---
 
 ## Getting Started
