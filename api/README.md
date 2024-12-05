@@ -1,7 +1,5 @@
 # API Documentation
 
----
-
 ## Getting Started
 
 ### Prerequisites
