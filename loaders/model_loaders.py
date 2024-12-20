@@ -4,6 +4,7 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     BitsAndBytesConfig,
+    Pipeline,
     pipeline,
 )
 import torch
@@ -22,7 +23,7 @@ class LLamaModelLoader:
         else:
             self.model = model_name
 
-        self.generator = pipeline(
+        self.generator: Pipeline = pipeline(
             "text-generation",
             model=self.model,
             tokenizer=self.tokenizer,
