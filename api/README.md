@@ -1,18 +1,5 @@
 # API Documentation
 
-## Overview
-
-This API provides an interface for interacting with a LLM capable of generating responses based on structured conversational prompts.
-
----
-
-## Features
-- **Flexible Input Format**: Accepts a structured list of messages with `role` and `content` fields.
-- **Customizable Output**: Supports parameters like `max_length` for controlling response length.
-- **Lightweight and Fast**: Built with FastAPI, ensuring high performance and ease of deployment.
-
----
-
 ## Getting Started
 
 ### Prerequisites
