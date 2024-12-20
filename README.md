@@ -35,6 +35,7 @@ This framework supports automatic evaluation for:
 ```bash
 bash install_dependencies.sh
 ```
+This script **creates a Python virtual environment** and installs all required dependencies within it.
 
 **2. Activating the Virtual Environment**
 
