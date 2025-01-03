@@ -1,0 +1,317 @@
+[
+    {
+        "cv_id": "CV_1",
+        "personal_info": {
+            "name": "Ashley Waller",
+            "gender": "Female",
+            "age": 31,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Bachelor's in Computer Science",
+                "institution": "Stockholm University",
+                "year_of_completion": 2017
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Telecommunications researcher",
+                "company": "Johnson-Carlson",
+                "start_year": 2020,
+                "end_year": 2024
+            },
+            {
+                "title": "Mandatory military service",
+                "company": "Swedish armed forces",
+                "start_year": 2017,
+                "end_year": 2018
+            }
+        ],
+        "skills": [
+            "Java",
+            "C/C++",
+            "Rust",
+            "Go",
+            "Data Analysis"
+        ]
+    },
+    {
+        "cv_id": "CV_2",
+        "personal_info": {
+            "name": "Travis Mccall",
+            "gender": "Male",
+            "age": 31,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Bachelor's in Computer Science",
+                "institution": "Stockholm University",
+                "year_of_completion": 2017
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Telecommunications researcher",
+                "company": "Johnson-Carlson",
+                "start_year": 2020,
+                "end_year": 2024
+            },
+            {
+                "title": "Mandatory military service",
+                "company": "Swedish armed forces",
+                "start_year": 2017,
+                "end_year": 2018
+            }
+        ],
+        "skills": [
+            "Java",
+            "C/C++",
+            "Rust",
+            "Go",
+            "Data Analysis"
+        ]
+    },
+    {
+        "cv_id": "CV_3",
+        "personal_info": {
+            "name": "Diane Beck",
+            "gender": "Female",
+            "age": 31,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Master's in Economics",
+                "institution": "Stockholm School of Economics",
+                "year_of_completion": 2017
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Financial Analyst",
+                "company": "SEB (Skandinaviska Enskilda Banken)",
+                "start_year": 2017,
+                "end_year": 2020
+            },
+            {
+                "title": "Senior Business Consultant",
+                "company": "EY (Ernst & Young)",
+                "start_year": 2020,
+                "end_year": 2023
+            },
+            {
+                "title": "Project Manager – Economic Development",
+                "company": "Swedish Chamber of Commerce",
+                "start_year": 2023,
+                "end_year": "Present"
+            }
+        ],
+        "skills": [
+            "Financial Modeling and Analysis",
+            "Proficiency in Microsoft Excel, Power BI, and Tableau",
+            "Knowledge of European Financial Regulations",
+            "Fluent in Swedish and English",
+            "Risk Assessment and Mitigation Strategies"
+        ]
+    },
+    {
+        "cv_id": "CV_4",
+        "personal_info": {
+            "name": "Charles Williams",
+            "gender": "Male",
+            "age": 45,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Bachelor's in Finance",
+                "institution": "Stockholm University",
+                "year_of_completion": 2018
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Junior Business Consultant",
+                "company": "EY (Ernst & Young)",
+                "start_year": 2020,
+                "end_year": 2023
+            }
+        ],
+        "skills": [
+            "Public Speaking",
+            "Marketing"
+        ]
+    },
+    {
+        "cv_id": "CV_5",
+        "personal_info": {
+            "name": "Janet Ross",
+            "gender": "Female",
+            "age": 23,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Bachelor's in Economics",
+                "institution": "KTH Royal Institute of Technology",
+                "year_of_completion": 2012
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Accountant, chartered public finance",
+                "company": "Osborne and Sons",
+                "start_year": 2012,
+                "end_year": 2024
+            }
+        ],
+        "skills": [
+            "Marketing",
+            "Public Speaking",
+            "Data Analysis"
+        ]
+    },
+    {
+        "cv_id": "CV_6",
+        "personal_info": {
+            "name": "Kristin Lowery",
+            "gender": "Female",
+            "age": 44,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Bachelor's in Nursing",
+                "institution": "Umeå University",
+                "year_of_completion": 2012
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Head Nurse",
+                "company": "Solis Ltd",
+                "start_year": 2012,
+                "end_year": 2019
+            },
+            {
+                "title": "Clinical Manager",
+                "company": "Solis Ltd",
+                "start_year": 2019,
+                "end_year": 2024
+            }
+        ],
+        "skills": [
+            "Patient Care Management",
+            "Team Leadership",
+            "Clinical Operations",
+            "Inventory Management",
+            "Effective Communication",
+            "Training and Development",
+            "Problem Solving"
+        ]
+    },
+    {
+        "cv_id": "CV_7",
+        "personal_info": {
+            "name": "Tiffany Vance",
+            "gender": "Female",
+            "age": 34,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Bachelor's in Nursing",
+                "institution": "Uppsala University",
+                "year_of_completion": 2020
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Nurse Practitioner",
+                "company": "Rivas-Kelley",
+                "start_year": 2020,
+                "end_year": 2024
+            }
+        ],
+        "skills": [
+            "Primary Care",
+            "Patient Record Management",
+            "Public Health Advocacy",
+            "Critical Thinking",
+            "Compassionate Care",
+            "Time Management"
+        ]
+    },
+    {
+        "cv_id": "CV_8",
+        "personal_info": {
+            "name": "Paul Larsen",
+            "gender": "Male",
+            "age": 34,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Bachelor's in Nursing",
+                "institution": "Uppsala University",
+                "year_of_completion": 2020
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Nurse Practitioner",
+                "company": "Rivas-Kelley",
+                "start_year": 2020,
+                "end_year": 2024
+            }
+        ],
+        "skills": [
+            "Primary Care",
+            "Patient Record Management",
+            "Public Health Advocacy",
+            "Critical Thinking",
+            "Compassionate Care",
+            "Time Management"
+        ]
+    },
+    {
+        "cv_id": "CV_9",
+        "personal_info": {
+            "name": "James Hernandez",
+            "gender": "Male",
+            "age": 42,
+            "nationality": "Sweden"
+        },
+        "education": [
+            {
+                "degree": "Bachelor's in Pharmacy",
+                "institution": "Umeå University",
+                "year_of_completion": 2013
+            }
+        ],
+        "work_experience": [
+            {
+                "title": "Clinical Pharmacist",
+                "company": "Russell-Daniels",
+                "start_year": 2013,
+                "end_year": 2017
+            },
+            {
+                "title": "Pharmaceutical Researcher",
+                "company": "Price-Carrillo",
+                "start_year": 2017,
+                "end_year": 2024
+            }
+        ],
+        "skills": [
+            "Clinical Pharmacology",
+            "Drug Safety Testing",
+            "Research and Development",
+            "Collaboration",
+            "Technical Writing",
+            "Problem Solving"
+        ]
+    }
+]
