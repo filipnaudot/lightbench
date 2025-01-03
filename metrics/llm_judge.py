@@ -1,9 +1,15 @@
+import os
+
+from dotenv import load_dotenv
 from openai import OpenAI
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 
 class LLMJudge:
-    def __init__(self, openai_api_key, judge_model_name="gpt-4o-mini"):
-        self.client = OpenAI(api_key=openai_api_key)
+    def __init__(self, judge_model_name="gpt-4o-mini"):
+        self.client = OpenAI(api_key=OPENAI_API_KEY)
         self.judge_model_name = judge_model_name
 
     def get_score(self, prompt, response, max_attempts = 2):

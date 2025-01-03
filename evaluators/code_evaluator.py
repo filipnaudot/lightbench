@@ -7,20 +7,25 @@ import threading
 import signal
 import json
 
+from dotenv import load_dotenv
+
 from utils import Printer
 from evaluators.evaluator import Evaluator
 from metrics.metrics import TTFT, VRAM, PowerUsage
 from loaders.model_loaders import LLamaModelLoader
 
+load_dotenv()
+HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+
 
 class CodeEvaluator(Evaluator):
-    def __init__(self, model_name, hf_token, quantize=False, few_shot=False, verbose=False):
+    def __init__(self, model_name, quantize=False, few_shot=False, verbose=False):
         super().__init__(verbose)
         self.few_shot:bool = few_shot
         self.quantize:bool = quantize
         
         self.model_name:str = model_name
-        self.hf_token:str = hf_token
+        self.hf_token:str = HUGGINGFACE_TOKEN
 
         self.inference_time_list:list[float] = []
         self.ttft_list:list[float] = []
@@ -30,7 +35,7 @@ class CodeEvaluator(Evaluator):
         self.num_test:int = 0
         self.passed_test:int = 0
 
-        self.model_loader = LLamaModelLoader(model_name, quantize, hf_token)
+        self.model_loader = LLamaModelLoader(model_name, quantize, HUGGINGFACE_TOKEN)
 
     def _clear_last_row(self):
         print(f"\r{' ' * 40}\r", end='', flush=True) # Clear last line

@@ -1,8 +1,6 @@
-import os
 import time
 import json
 import argparse
-from dotenv import load_dotenv
 
 from configurators.model_setup_configurator import ModelSetupConfigurator 
 from evaluators.code_evaluator import CodeEvaluator
@@ -34,7 +32,7 @@ def create_coding_prompts(json_list, system_command):
     return prompts
 
 
-def evaluate_code(hf_token):
+def evaluate_code():
     start_test_line = 1
     end_test_line = 450
     with open('./data/mbpp/mbpp.jsonl', 'r') as json_file:
@@ -52,7 +50,7 @@ def evaluate_code(hf_token):
     for model, quantize, few_shot in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n    few-shot: {str(few_shot)}\n")
         
-        code_evaluator = CodeEvaluator(model, hf_token, quantize=quantize, few_shot=few_shot, verbose=False)
+        code_evaluator = CodeEvaluator(model, quantize=quantize, few_shot=few_shot, verbose=False)
         code_evaluator.run(prompts)
         code_evaluator.print_summary()
         code_evaluator.cleanup()
@@ -86,7 +84,7 @@ def create_qa_prompts(json_list, system_command):
     return prompts
 
 
-def evaluate_text(hf_token, openai_api_key):
+def evaluate_text():
     start_test_line = 1
     end_test_line = 100
     
@@ -100,13 +98,13 @@ def evaluate_text(hf_token, openai_api_key):
     
     prompts = create_qa_prompts(json_list, system_command)
     
-    judge = LLMJudge(openai_api_key=openai_api_key)
+    judge = LLMJudge()
 
     model_setup_conf = ModelSetupConfigurator()
     models = model_setup_conf.generate_list(use_quantization=True, use_few_shot=False)
     for model, quantize, _ in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
-        text_evaluator = TextEvaluator(model, hf_token, judge, quantize=quantize, verbose=False)
+        text_evaluator = TextEvaluator(model, judge, quantize=quantize, verbose=False)
         text_evaluator.run(prompts)
         text_evaluator.print_summary()
         text_evaluator.cleanup()
@@ -134,19 +132,14 @@ def parse_args():
 
 def main():
 
-    load_dotenv()
-    hf_token = os.getenv("HUGGINGFACE_TOKEN")
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-
     args = parse_args()
-
     if args.code:
-        evaluate_code(hf_token)
+        evaluate_code()
     elif args.all:
-        evaluate_code(hf_token)
-        evaluate_text(hf_token, openai_api_key)
+        evaluate_code()
+        evaluate_text()
     elif args.text:
-        evaluate_text(hf_token, openai_api_key)
+        evaluate_text()
     else:
         print("Please provide an argument. Use --code, --all, or --text. Use --help for more information.")
 

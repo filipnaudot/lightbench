@@ -5,6 +5,7 @@ import gc
 import json
 
 import torch
+from dotenv import load_dotenv
 
 from utils import Printer
 from evaluators.evaluator import Evaluator
@@ -12,14 +13,18 @@ from metrics.llm_judge import LLMJudge
 from metrics.metrics import TTFT, VRAM, PowerUsage
 from loaders.model_loaders import LLamaModelLoader
 
+load_dotenv()
+HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+
+
 
 class TextEvaluator(Evaluator):
-    def __init__(self, model_name:str, hf_token:str, judge:LLMJudge, quantize:bool = False, verbose:bool = False):
+    def __init__(self, model_name:str, judge:LLMJudge, quantize:bool = False, verbose:bool = False):
         super().__init__(verbose)
 
         self.quantize:bool = quantize
         self.model_name:str = model_name
-        self.hf_token:str = hf_token
+        self.hf_token:str = HUGGINGFACE_TOKEN
         self.judge:LLMJudge = judge
 
         self.num_test:int = 0
@@ -29,7 +34,7 @@ class TextEvaluator(Evaluator):
         self.power_usage_list:list[float] = []
         self.llm_judge_score_list:list[int] = []
 
-        self.model_loader = LLamaModelLoader(model_name, quantize, hf_token)
+        self.model_loader = LLamaModelLoader(model_name, quantize, HUGGINGFACE_TOKEN)
 
 
     def _clear_last_row(self):
