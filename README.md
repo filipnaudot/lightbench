@@ -56,5 +56,14 @@ MODEL_NAME=
 `MODEL_NAME`: Specifies the model to use in the **chat.py** script for interactive chat.
 
 
-## Paper
-***LLMs and Efficiency: A Study in Computational Demands*** (Work in progress)
+## 📝 Cite this Paper
+```bibtex
+@inproceedings{naudot2025performance,
+  author    = {Filip Naudot},
+  title     = {Performance and Computational Demands of LLMs: Impact of Model Size and Quantization},
+  booktitle = {Proceedings of Umeå’s 28th Student Conference in Computing Science (USCCS 2025)},
+  editor    = {Thomas Hellström},
+  year      = {2025},
+  publisher = {Umeå University, Sweden},
+}
+```
