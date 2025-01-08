@@ -59,6 +59,39 @@ class TextEvaluator(Evaluator):
         Printer.print_cyan(f"\rAverage score: {avg_score:.2f}", end='')
 
 
+    def _create_qa_prompts(self):
+        start_test_line = 1
+        end_test_line = 100
+        with open('./data/hotpotqa/hotpot_test_fullwiki_v1-first-500.jsonl', 'r') as json_file:
+            json_list = list(json_file)[start_test_line-1:end_test_line]
+        
+        system_command = {
+            "role": "system",
+            "content": "You are a question-answering assistant. Answer the user's question \
+                        based on the provided context. Respond with only the answer in a single sentence.",
+        }
+        prompts = []
+        for json_str in json_list:
+            result = json.loads(json_str)
+            question = result["question"]
+            context = "".join(["".join(sentences) for para in result["context"] for sentences in para[1]])
+            answer = None # result["answer"]
+            
+            prompt = (
+                [
+                    system_command,
+                    {
+                        "role": "user",
+                        "content": f'Answer the question based on the following context: "{context}". The question is: "{question}"',
+                    }
+                ],
+                answer
+            )
+            prompts.append(prompt)
+        
+        return prompts
+
+
     def _generate_response(self, prompt):
         vram_handler = VRAM()
         ttft_handler = TTFT(self.model_loader.tokenizer)
@@ -103,7 +136,8 @@ class TextEvaluator(Evaluator):
         return score
     
 
-    def run(self, prompts):
+    def run(self):
+        prompts = self._create_qa_prompts()
         for index, (prompt, refrence_answer) in enumerate(prompts):
             response, inference_time, ttft, memory_usage, power_usage = self._generate_response(prompt)
             self._print_test_metrics(index, inference_time, ttft, memory_usage, power_usage)
