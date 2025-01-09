@@ -15,7 +15,7 @@ class OpenAILoader:
         self.model_name = model_name
 
 
-    def generate(self, prompt, max_tokens: int = 520):
+    def generate(self, prompt, max_tokens: int = 512):
         response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=prompt,
