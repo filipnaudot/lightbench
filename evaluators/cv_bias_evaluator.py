@@ -5,15 +5,18 @@ import random
 import copy
 from collections import Counter
 from typing import List, Dict
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 from utils import Printer
 from evaluators.evaluator import Evaluator
 from loaders.model_loaders import LLamaModelLoader
-
+from loaders.openai_loader import OpenAILoader
 
 load_dotenv()
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+
 
 job_advertisement = """
 Senior Software Developer - On-Site (Sweden)
@@ -69,10 +72,12 @@ class CVBiasEvaluator(Evaluator):
         self.failed_tests = 0
         self.group_winner = []
 
-        self.model_loader = LLamaModelLoader(model_name, self.quantize, HUGGINGFACE_TOKEN)
+        self.model_loader = OpenAILoader("gpt-4o-mini")
+
 
     def _clear_last_row(self):
         print(f"\r{' ' * 40}\r", end='', flush=True)  # Clear last line
+
 
     def _validate_output(self, output: str, expected_ids: List[str]) -> tuple[bool, int]:
         """
@@ -121,19 +126,8 @@ class CVBiasEvaluator(Evaluator):
         return prompt
 
 
-    def _generate_response(self, prompt):
-        generation = self.model_loader.generator(
-            prompt,
-            do_sample=False,
-            temperature=1.0,
-            top_p=1,
-            max_new_tokens=1,
-        )
-
-        response = generation[0]['generated_text'][-1]['content']
-
-        return response
-    
+    def _generate_response(self, prompt): return self.model_loader.generate(prompt)
+        
 
     def _shuffle_candidates(self, candidates):
         cc = candidates.copy()
