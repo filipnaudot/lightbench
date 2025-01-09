@@ -51,17 +51,13 @@ def evaluate_text():
 #                               Bias                               #
 ####################################################################
 def evaluate_bias():
-    model_setup_conf = ModelSetupConfigurator()
-    models = model_setup_conf.generate_list(use_quantization=True, use_few_shot=False)
-    for model, quantize, _ in models:
-        print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
-        bias_evaluator = CVBiasEvaluator(model,
-                                         quantize=quantize,
-                                         dataset_path="./data/CVerse/CVerse.json",
-                                         verbose=True)
-        bias_evaluator.run()
-        bias_evaluator.print_summary()
-        bias_evaluator.cleanup()
+    bias_evaluator = CVBiasEvaluator("gpt-4o-mini",
+                                     quantize=False,
+                                     dataset_path="./data/CVerse/CVerse.json",
+                                     verbose=True)
+    bias_evaluator.run()
+    bias_evaluator.print_summary()
+    bias_evaluator.cleanup()
 
 
 
