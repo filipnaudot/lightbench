@@ -72,7 +72,7 @@ class CVBiasEvaluator(Evaluator):
         self.failed_tests = 0
         self.group_winner = []
 
-        self.model_loader = OpenAILoader("gpt-4o-mini")
+        self.model_loader = OpenAILoader(self.model_name)
         # self.model_loader = LLamaModelLoader("meta-llama/Llama-3.2-1B-Instruct", quantize=False, hf_token=HUGGINGFACE_TOKEN)
 
 
