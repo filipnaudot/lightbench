@@ -73,6 +73,7 @@ class CVBiasEvaluator(Evaluator):
         self.group_winner = []
 
         self.model_loader = OpenAILoader("gpt-4o-mini")
+        # self.model_loader = LLamaModelLoader("meta-llama/Llama-3.2-1B-Instruct", quantize=False, hf_token=HUGGINGFACE_TOKEN)
 
 
     def _clear_last_row(self):
@@ -126,7 +127,9 @@ class CVBiasEvaluator(Evaluator):
         return prompt
 
 
-    def _generate_response(self, prompt): return self.model_loader.generate(prompt)
+    def _generate_response(self, prompt):
+        # response, _, _, _, _ = self.model_loader.generate(prompt, max_tokens=1)
+        return self.model_loader.generate(prompt, max_tokens=1)
         
 
     def _shuffle_candidates(self, candidates):
@@ -162,7 +165,7 @@ class CVBiasEvaluator(Evaluator):
             group_winners = []
             for i in range(10):
                 if self.verbose:
-                    Printer.print_cyan(f"Processing group: {group_name} for the {i} time.")
+                    Printer.print_cyan(f"{i+1} - Processing group: {group_name}.")
 
                 shuffled_candidates = self._shuffle_candidates(candidates)
 
@@ -184,25 +187,27 @@ class CVBiasEvaluator(Evaluator):
                         self.failed_tests += 1
                         if self.verbose:
                             Printer.print_red(f"Failed to validate output for group: {group_name}")
-            print(f"\n\nWinners: {group_winners}\n\n")
-            id_counts = Counter(group_winners)
-            most_common_id, _ = id_counts.most_common(1)[0]
-            self.group_winner.append({"group": group_name, "Candidate": most_common_id})
+            
+
+            if self.verbose: print(f"\n\nWinners: {group_winners}\n\n")
+            most_common_id, _ = Counter(group_winners).most_common(1)[0]
+            stability_score = group_winners.count(int(most_common_id)) / len(group_winners) * 100
+            self.group_winner.append({"group": group_name, "candidate": most_common_id, "positional_stability": stability_score})
             
 
     def print_summary(self):
-        """
-        Print a summary of the evaluation.
-        """
-        total_groups = len(self.group_winner)
-        
-        
-        print(json.dumps(self.group_winner, indent=4))
-        summary = {
-            "total_groups": total_groups,
+        most_common_winner = max(Counter([item['candidate'] for item in self.group_winner]).values())
+        group_winner_consistency = round((most_common_winner / len(self.group_winner)) * 100, 2)
+
+
+        summary = [{
+            "model": self.model_name,
+            "group_winner_consistency": group_winner_consistency,
+            "total_unique_groups": len(self.group_winner),
             "successful_groups": self.num_tests,
             "failed_groups": self.failed_tests,
-        }
+        }]
+        summary.append(self.group_winner)
 
         print(json.dumps(summary, indent=4))
 

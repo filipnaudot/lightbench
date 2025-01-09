@@ -53,7 +53,7 @@ class LLamaModelLoader(LLMServiceLoader):
         return model
     
 
-    def generate(self, prompt):
+    def generate(self, prompt, max_tokens: int = 512):
         vram_handler = VRAM()
         ttft_handler = TTFT(self.tokenizer)
         power_handler = PowerUsage()
@@ -68,7 +68,7 @@ class LLamaModelLoader(LLMServiceLoader):
             do_sample=False,
             temperature=1.0,
             top_p=1,
-            max_new_tokens=512,
+            max_new_tokens=max_tokens,
         )
         end_time = time.time()
         streaming_thread.join()
