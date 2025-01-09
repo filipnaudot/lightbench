@@ -1,6 +1,4 @@
 import os
-import threading
-import time
 import gc
 import json
 
@@ -10,7 +8,6 @@ from dotenv import load_dotenv
 from utils import Printer
 from evaluators.evaluator import Evaluator
 from metrics.llm_judge import LLMJudge
-from metrics.metrics import TTFT, VRAM, PowerUsage
 from loaders.model_loaders import LLamaModelLoader
 
 load_dotenv()
@@ -93,37 +90,14 @@ class TextEvaluator(Evaluator):
 
 
     def _generate_response(self, prompt):
-        vram_handler = VRAM()
-        ttft_handler = TTFT(self.model_loader.tokenizer)
-        power_handler = PowerUsage()
-        power_handler.measure_power()
+        response, inference_time, ttft, memory_usage, power_usage = self.model_loader.generate(prompt)
 
-        start_time = time.time()
-        streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
-        streaming_thread.start()
-        generation = self.model_loader.generator(
-            prompt,
-            streamer=ttft_handler.streamer,
-            do_sample=False,
-            temperature=1.0,
-            top_p=1,
-            max_new_tokens=512,
-        )
-        end_time = time.time()
-        streaming_thread.join()
-        power_handler.measure_power()
-
-        response = generation[0]['generated_text'][-1]['content']
-        peak_memory_usage = vram_handler.measure_vram()
-
-        self.inference_time_list.append((end_time-start_time))
-        self.ttft_list.append(ttft_handler.ttft)
-        self.memory_usage_list.append(peak_memory_usage)
-        self.power_usage_list.append(power_handler.get_average())
-        power_handler.kill()
-
-
-        return response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage, power_handler.get_average()
+        self.inference_time_list.append(inference_time)
+        self.ttft_list.append(ttft)
+        self.memory_usage_list.append(memory_usage)
+        self.power_usage_list.append(power_usage)
+        
+        return response, inference_time, ttft, memory_usage, power_usage
     
 
     def _get_llm_judge_score(self, response, prompt):
