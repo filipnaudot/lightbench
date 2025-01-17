@@ -78,7 +78,7 @@ If you use **lightbench** in your research, please cite the repository:
 ```bibtex
 @misc{lightbench2025,
   author    = {Filip Naudot},
-  title     = {Lightbench: Benchmarking and Analysis of LLM Performance},
+  title     = {lightbench},
   year      = {2025},
   howpublished = {\url{https://github.com/filipnaudot/lightbench}},
 }
