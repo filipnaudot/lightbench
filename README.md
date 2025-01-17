@@ -56,7 +56,10 @@ MODEL_NAME=
 `MODEL_NAME`: Specifies the model to use in the **chat.py** script for interactive chat.
 
 
-## 📝 Cite this Paper
+## 📝 Cite this work
+### Paper
+
+If you refer to the research paper related to this project, please cite:
 ```bibtex
 @inproceedings{naudot2025performance,
   author    = {Filip Naudot},
@@ -65,5 +68,18 @@ MODEL_NAME=
   editor    = {Thomas Hellström},
   year      = {2025},
   publisher = {Umeå University, Sweden},
+  note      = {Branch \texttt{conf-paper} used for paper results},
+}
+```
+
+
+### Code Repository
+If you use **lightbench** in your research, please cite the repository:
+```bibtex
+@misc{lightbench2025,
+  author    = {Filip Naudot},
+  title     = {Lightbench: Benchmarking and Analysis of LLM Performance},
+  year      = {2025},
+  howpublished = {\url{https://github.com/filipnaudot/lightbench}},
 }
 ```
