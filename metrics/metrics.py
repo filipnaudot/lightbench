@@ -2,6 +2,7 @@ import time
 
 import torch
 import pynvml
+from pynvml import NVMLError, NVMLError_NotSupported
 
 from transformers import TextIteratorStreamer
 
@@ -32,14 +33,31 @@ class VRAM:
     
 
 class PowerUsage:
-    def __init__(self, gpu_index=0):
+    def __init__(self, gpu_index=0, DEBUG:bool = False):
+        self.DEBUG = DEBUG
+
+        try:
+            pynvml.nvmlInit()
+            self.handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_index)
+        except NVMLError as e:
+            if self.DEBUG: print("Failed to initialize NVML: ", e)
+            self.handle = None
+
         pynvml.nvmlInit()
         self.handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_index)
         self.power_samples = []
 
     def measure_power(self):
-        power = pynvml.nvmlDeviceGetPowerUsage(self.handle) / 1000.0  # Convert milliwatts to watts
-        self.power_samples.append(power)
+        if self.handle:
+            try:
+                power = pynvml.nvmlDeviceGetPowerUsage(self.handle) / 1000.0  # mW to W
+                self.power_samples.append(power)
+            except NVMLError_NotSupported:
+                if self.DEBUG: print("Power usage measurement not supported on this GPU.")
+                return 0
+            except NVMLError as e:
+                if self.DEBUG: print("NVML error encountered: ", e)
+                return 0
         return power
 
     def get_average(self):
