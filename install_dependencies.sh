@@ -64,6 +64,7 @@ else
     esac
     echo "Installing PyTorch with CUDA support ($TORCH_CUDA)..."
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/$TORCH_CUDA
+    pip install pynvml
 fi
 
 
