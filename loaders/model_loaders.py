@@ -1,3 +1,4 @@
+import os
 import gc
 import time
 import threading
@@ -12,15 +13,19 @@ from transformers import (
 import torch
 
 from loaders.loader import LLMServiceLoader
+from loaders.generation import Generation
 from metrics.metrics import TTFT, VRAM, PowerUsage
+
+from dotenv import load_dotenv
+load_dotenv()
+HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
 
 class LLamaModelLoader(LLMServiceLoader):
-    def __init__(self, model_name: str, quantize: bool = False, hf_token: str = None):
+    def __init__(self, model_name: str, quantize: bool = False):
         self.model_name = model_name
         self.quantize = quantize
-        self.hf_token = hf_token
-        self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
+        self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_name, token=HUGGINGFACE_TOKEN)
         self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
 
         if self.quantize:
@@ -35,7 +40,7 @@ class LLamaModelLoader(LLMServiceLoader):
             torch_dtype=torch.bfloat16,
             device_map="auto",
             pad_token_id=self.tokenizer.eos_token_id,
-            token=self.hf_token,
+            token=HUGGINGFACE_TOKEN,
         )
 
 
@@ -77,8 +82,14 @@ class LLamaModelLoader(LLMServiceLoader):
         power_handler.kill()
 
         response = generation[0]['generated_text'][-1]['content']
-        return response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage, power_handler.get_average()
+        return Generation(response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage, power_handler.get_average())
 
+
+    def is_quantized(self): return self.quantize
+
+    def is_local(slef): return True
+
+    def name(self): return self.model_name
 
     def cleanup(self):        
         del self.generator

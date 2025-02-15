@@ -14,6 +14,18 @@ class LLMServiceLoader(ABC):
         """
         pass
 
+    def name(self) -> str:
+        """
+        Returns the name of the model.
+        """
+        pass
+
+    def is_local(slef) -> bool:
+        """
+        Returns true if using a local model, false if using an API.
+        """
+        pass
+
     @abstractmethod
     def cleanup(self):
         """

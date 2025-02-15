@@ -6,8 +6,10 @@ from configurators.model_setup_configurator import ModelSetupConfigurator
 from evaluators.code_evaluator import CodeEvaluator
 from evaluators.text_evaluator import TextEvaluator
 from evaluators.cv_bias_evaluator import CVBiasEvaluator
-
 from metrics.llm_judge import LLMJudge
+
+from loaders.model_loaders import LLamaModelLoader
+from loaders.openai_loader import OpenAILoader
 
 
 
@@ -21,11 +23,11 @@ def evaluate_code():
     models = test_configurator.generate_list(use_quantization=True, use_few_shot=True)
     for model, quantize, few_shot in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n    few-shot: {str(few_shot)}\n")
-        
-        code_evaluator = CodeEvaluator(model, quantize=quantize, few_shot=few_shot, verbose=False)
+        model_loader = LLamaModelLoader(model, quantize)
+        code_evaluator = CodeEvaluator(model_loader, quantize=quantize, few_shot=few_shot, verbose=False)
         code_evaluator.run()
         code_evaluator.print_summary()
-        code_evaluator.cleanup()
+        model_loader.cleanup()
         time.sleep(3)
 
 
@@ -39,10 +41,11 @@ def evaluate_text():
     models = model_setup_conf.generate_list(use_quantization=True, use_few_shot=False)
     for model, quantize, _ in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
-        text_evaluator = TextEvaluator(model, judge, quantize=quantize, verbose=False)
+        model_loader = LLamaModelLoader(model, quantize)
+        text_evaluator = TextEvaluator(model_loader, judge, quantize=quantize, verbose=False)
         text_evaluator.run()
         text_evaluator.print_summary()
-        text_evaluator.cleanup()
+        model_loader.cleanup()
         time.sleep(3)
 
 

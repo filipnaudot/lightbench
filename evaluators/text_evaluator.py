@@ -1,27 +1,20 @@
 import os
-import gc
 import json
-
-import torch
-from dotenv import load_dotenv
 
 from utils import Printer
 from evaluators.evaluator import Evaluator
 from metrics.llm_judge import LLMJudge
-from loaders.model_loaders import LLamaModelLoader
 
-load_dotenv()
-HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+from loaders.loader import LLMServiceLoader
+from loaders.generation import Generation
 
 
 
 class TextEvaluator(Evaluator):
-    def __init__(self, model_name:str, judge:LLMJudge, quantize:bool = False, verbose:bool = False):
+    def __init__(self, model_loader: LLMServiceLoader, judge:LLMJudge, quantize:bool = False, verbose:bool = False):
         super().__init__(verbose)
 
         self.quantize:bool = quantize
-        self.model_name:str = model_name
-        self.hf_token:str = HUGGINGFACE_TOKEN
         self.judge:LLMJudge = judge
 
         self.num_test:int = 0
@@ -31,7 +24,7 @@ class TextEvaluator(Evaluator):
         self.power_usage_list:list[float] = []
         self.llm_judge_score_list:list[int] = []
 
-        self.model_loader = LLamaModelLoader(model_name, quantize, HUGGINGFACE_TOKEN)
+        self.model_loader = model_loader
 
 
     def _clear_last_row(self):
@@ -89,15 +82,15 @@ class TextEvaluator(Evaluator):
         return prompts
 
 
-    def _generate_response(self, prompt):
-        response, inference_time, ttft, memory_usage, power_usage = self.model_loader.generate(prompt)
+    def _generate_response(self, prompt) -> Generation:
+        generation: Generation = self.model_loader.generate(prompt)
 
-        self.inference_time_list.append(inference_time)
-        self.ttft_list.append(ttft)
-        self.memory_usage_list.append(memory_usage)
-        self.power_usage_list.append(power_usage)
+        self.inference_time_list.append(generation.inferece_time)
+        self.ttft_list.append(generation.ttft)
+        self.memory_usage_list.append(generation.peak_memory_usage)
+        self.power_usage_list.append(generation.avg_power_usage)
         
-        return response, inference_time, ttft, memory_usage, power_usage
+        return generation
     
 
     def _get_llm_judge_score(self, response, prompt):
@@ -113,10 +106,14 @@ class TextEvaluator(Evaluator):
     def run(self):
         prompts = self._create_qa_prompts()
         for index, (prompt, refrence_answer) in enumerate(prompts):
-            response, inference_time, ttft, memory_usage, power_usage = self._generate_response(prompt)
-            self._print_test_metrics(index, inference_time, ttft, memory_usage, power_usage)
+            generation: Generation = self._generate_response(prompt)
+            self._print_test_metrics(index,
+                                     generation.inferece_time,
+                                     generation.ttft,
+                                     generation.peak_memory_usage,
+                                     generation.avg_power_usage)
             
-            score = self._get_llm_judge_score(response, prompt)
+            score = self._get_llm_judge_score(generation.response, prompt)
             self.llm_judge_score_list.append(score)
 
             self.num_test += 1
@@ -152,26 +149,23 @@ class TextEvaluator(Evaluator):
 
 
         summary = {
-            "quantize": str(self.quantize),
-            "average_inference_time_sec": round(avg_inference_time, 2),
-            "average_ttft_sec": round(avg_ttft, 2),
-            "average_mem_usage_GB": round(avg_memory_usage, 2),
-            "average_power_usage_W": round(avg_power_usage, 2),
             "total_tests": self.num_test,
-            "avg_score": round(avg_score, 2)
+            "avg_score": round(avg_score, 2),
+            "average_inference_time_sec": round(avg_inference_time, 2),
         }
+        if self.model_loader.is_local():
+            summary.update({
+                "average_ttft_sec": round(avg_ttft, 2),
+                "quantize": str(self.quantize),
+                "average_mem_usage_GB": round(avg_memory_usage, 2),
+                "average_power_usage_W": round(avg_power_usage, 2),
+            })
 
         print(json.dumps(summary, indent=4))
 
         os.makedirs("./results/question_answering", exist_ok=True)
-        with open(f"./results/question_answering/{self.model_name.replace('/','-')}---quantize={str(self.quantize)}.json", "w") as file:
+        with open(f"./results/question_answering/{self.model_loader.name().replace('/','-')}---quantize={str(self.quantize)}.json", "w") as file:
             file.write(json.dumps(summary, indent=4))
 
 
-    def cleanup(self):        
-        self.model_loader.cleanup()
-        del self.model_loader
-        self.model_loader = None
-        gc.collect()
-
-        torch.cuda.empty_cache()
+    def cleanup(self): pass

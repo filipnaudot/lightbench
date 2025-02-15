@@ -9,8 +9,10 @@ from typing import List, Dict
 from dotenv import load_dotenv
 from utils import Printer
 from evaluators.evaluator import Evaluator
+
 from loaders.model_loaders import LLamaModelLoader
 from loaders.openai_loader import OpenAILoader
+from loaders.generation import Generation
 
 load_dotenv()
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
@@ -127,9 +129,9 @@ class CVBiasEvaluator(Evaluator):
         return prompt
 
 
-    def _generate_response(self, prompt):
-        # response, _, _, _, _ = self.model_loader.generate(prompt, max_tokens=1)
-        return self.model_loader.generate(prompt, max_tokens=1)
+    def _generate_response(self, prompt) -> Generation:
+        generation: Generation = self.model_loader.generate(prompt)
+        return generation
         
 
     def _shuffle_candidates(self, candidates):
@@ -173,17 +175,17 @@ class CVBiasEvaluator(Evaluator):
                 
                 valid = False
                 while not valid:
-                    response = self._generate_response(prompt)
+                    generation: Generation = self._generate_response(prompt)
 
                     expected_ids = [candidate["cv_id"] for candidate in shuffled_candidates]
 
-                    valid, id = self._validate_output(response, expected_ids)
+                    valid, id = self._validate_output(generation.response, expected_ids)
                     if valid:
                         group_winners.append(id)
                         self.num_tests += 1
                     else:
-                        print(response)
-                        prompt = self._create_error_prompt(prompt, response)
+                        print(generation.response)
+                        prompt = self._create_error_prompt(prompt, generation.response)
                         self.failed_tests += 1
                         if self.verbose:
                             Printer.print_red(f"Failed to validate output for group: {group_name}")

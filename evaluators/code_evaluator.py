@@ -5,25 +5,20 @@ from contextlib import redirect_stdout
 import signal
 import json
 
-from dotenv import load_dotenv
-
 from utils import Printer
 from evaluators.evaluator import Evaluator
-from metrics.metrics import TTFT, VRAM, PowerUsage
-from loaders.model_loaders import LLamaModelLoader
 
-load_dotenv()
-HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+from loaders.loader import LLMServiceLoader
+from loaders.generation import Generation
+
 
 
 class CodeEvaluator(Evaluator):
-    def __init__(self, model_name, quantize=False, few_shot=False, verbose=False):
+    def __init__(self, model_loader: LLMServiceLoader, quantize=False, few_shot=False, verbose=False):
         super().__init__(verbose)
+        self.model_loader = model_loader
         self.few_shot:bool = few_shot
         self.quantize:bool = quantize
-        
-        self.model_name:str = model_name
-        self.hf_token:str = HUGGINGFACE_TOKEN
 
         self.inference_time_list:list[float] = []
         self.ttft_list:list[float] = []
@@ -33,7 +28,6 @@ class CodeEvaluator(Evaluator):
         self.num_test:int = 0
         self.passed_test:int = 0
 
-        self.model_loader = LLamaModelLoader(model_name, quantize, HUGGINGFACE_TOKEN)
 
     def _clear_last_row(self):
         print(f"\r{' ' * 40}\r", end='', flush=True) # Clear last line
@@ -129,15 +123,15 @@ class CodeEvaluator(Evaluator):
     
 
 
-    def _generate_response(self, prompt):
-        response, inference_time, ttft, memory_usage, power_usage = self.model_loader.generate(prompt)
+    def _generate_response(self, prompt) -> Generation:
+        generation: Generation = self.model_loader.generate(prompt)
 
-        self.inference_time_list.append(inference_time)
-        self.ttft_list.append(ttft)
-        self.memory_usage_list.append(memory_usage)
-        self.power_usage_list.append(power_usage)
+        self.inference_time_list.append(generation.inferece_time)
+        self.ttft_list.append(generation.ttft)
+        self.memory_usage_list.append(generation.peak_memory_usage)
+        self.power_usage_list.append(generation.avg_power_usage)
         
-        return response, inference_time, ttft, memory_usage, power_usage
+        return generation
     
     
     def _create_few_shot_prompt(self, prompt, response, message):
@@ -157,24 +151,31 @@ class CodeEvaluator(Evaluator):
     def run(self):
         prompts = self._create_coding_prompts()
         for index, (prompt, test) in enumerate(prompts):
-            response, inference_time, ttft, memory_usage, power_usage = self._generate_response(prompt)
-            self._print_test_metrics(index, inference_time, ttft, memory_usage, power_usage)
-            extracted_code = self._preprocess_data(response).strip()
+            generation: Generation = self._generate_response(prompt)
+            self._print_test_metrics(index,
+                                     generation.inferece_time,
+                                     generation.ttft,
+                                     generation.peak_memory_usage,
+                                     generation.avg_power_usage)
+            extracted_code = self._preprocess_data(generation.response).strip()
             passed, message = self._validate_code(extracted_code, test, 0)
 
             if self.few_shot and not passed:
-                prompt = self._create_few_shot_prompt(prompt, response, message)
+                prompt = self._create_few_shot_prompt(prompt, generation.response, message)
                 shots = 1
 
                 while not passed and shots <= 2:
                     self._print_test_status()
-
-                    response, inference_time, ttft, memory_usage, power_usage = self._generate_response(prompt)
-                    self._print_test_metrics(index, inference_time, ttft, memory_usage, power_usage)
-                    extracted_code = self._preprocess_data(response).strip()
+                    generation: Generation = self._generate_response(prompt)
+                    self._print_test_metrics(index,
+                                            generation.inferece_time,
+                                            generation.ttft,
+                                            generation.peak_memory_usage,
+                                            generation.avg_power_usage)
+                    extracted_code = self._preprocess_data(generation.response).strip()
                     passed, message = self._validate_code(extracted_code, test, shots)
 
-                    prompt = self._create_few_shot_prompt(prompt, response, message)
+                    prompt = self._create_few_shot_prompt(prompt, generation.response, message)
                     shots += 1
 
             self.num_test += 1
@@ -183,13 +184,6 @@ class CodeEvaluator(Evaluator):
 
             self._print_test_status()
         print()
-    
-
-    def cleanup(self):        
-        self.model_loader.cleanup()
-        del self.model_loader
-        self.model_loader = None
-        gc.collect()
 
 
     def print_summary(self):
@@ -218,20 +212,27 @@ class CodeEvaluator(Evaluator):
         else:
             passed_percentage = 0.0
 
+        
         summary = {
-            "quantize": str(self.quantize),
-            "few_shot": str(self.few_shot),
-            "average_inference_time_sec": round(avg_inference_time, 2),
-            "average_ttft_sec": round(avg_ttft, 2),
-            "average_mem_usage_GB": round(avg_memory_usage, 2),
-            "average_power_usage_W": round(avg_power_usage, 2),
             "passed_tests": self.passed_test,
             "total_tests": self.num_test,
-            "passed_percentage": round(passed_percentage, 2)
+            "passed_percentage": round(passed_percentage, 2),
+            "few_shot": str(self.few_shot),
+            "average_inference_time_sec": round(avg_inference_time, 2),
         }
+        if self.model_loader.is_local():
+            summary.update({
+                "average_ttft_sec": round(avg_ttft, 2),
+                "quantize": str(self.quantize),
+                "average_mem_usage_GB": round(avg_memory_usage, 2),
+                "average_power_usage_W": round(avg_power_usage, 2),
+            })
 
         print(json.dumps(summary, indent=4))
 
         os.makedirs("./results/code_evaluation", exist_ok=True)
-        with open(f"./results/code_evaluation/{self.model_name.replace('/','-')}---quantize={str(self.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
+        with open(f"./results/code_evaluation/{self.model_loader.name().replace('/','-')}---quantize={str(self.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
             file.write(json.dumps(summary, indent=4))
+    
+    
+    def cleanup(self): pass
