@@ -64,7 +64,6 @@ class LLamaModelLoader(LLMServiceLoader):
         power_handler = PowerUsage()
         power_handler.measure_power()
 
-        # start_time = time.time()
         start_time = time.perf_counter()
         streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
         streaming_thread.start()
