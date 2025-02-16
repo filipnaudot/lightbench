@@ -64,7 +64,8 @@ class LLamaModelLoader(LLMServiceLoader):
         power_handler = PowerUsage()
         power_handler.measure_power()
 
-        start_time = time.time()
+        # start_time = time.time()
+        start_time = time.perf_counter()
         streaming_thread = threading.Thread(target=ttft_handler.measure_ttft, args=(start_time,))
         streaming_thread.start()
         generation = self.generator(
@@ -75,14 +76,16 @@ class LLamaModelLoader(LLMServiceLoader):
             top_p=1,
             max_new_tokens=max_tokens,
         )
-        end_time = time.time()
         streaming_thread.join()
         power_handler.measure_power()
-        peak_memory_usage = vram_handler.measure_vram()
         power_handler.kill()
 
         response = generation[0]['generated_text'][-1]['content']
-        return Generation(response, (end_time-start_time), ttft_handler.ttft, peak_memory_usage, power_handler.get_average())
+        return Generation(response=response,
+                          inferece_time=(time.perf_counter() - start_time),
+                          ttft=ttft_handler.ttft,
+                          peak_memory_usage=vram_handler.measure_vram(),
+                          avg_power_usage=power_handler.get_average())
 
 
     def is_quantized(self): return self.quantize

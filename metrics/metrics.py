@@ -16,7 +16,7 @@ class TTFT:
     def measure_ttft(self, start_time):
         # IMPORTANT: streamers 'timeout' has to be None for this to work
         for _ in self.streamer:
-            self.ttft = time.time() - start_time
+            self.ttft = time.perf_counter() - start_time
             break
 
 
