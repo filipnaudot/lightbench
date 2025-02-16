@@ -1,5 +1,6 @@
 import gc
 import os
+import time
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -19,13 +20,14 @@ class OpenAILoader(LLMServiceLoader):
 
 
     def generate(self, prompt, max_tokens: int = 512) -> Generation:
+        start_time = time.perf_counter()
         response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=prompt,
                 max_tokens=max_tokens,
             )
-        # TODO: Add inference time.
-        return Generation(response.choices[0].message.content)
+        return Generation(response=response.choices[0].message.content,
+                          inferece_time=(time.perf_counter() - start_time))
 
 
     def is_local(slef): return False
