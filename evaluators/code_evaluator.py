@@ -11,6 +11,8 @@ from evaluators.evaluator import Evaluator
 from loaders.loader import LLMServiceLoader
 from loaders.generation import Generation
 
+from data.mbpp.mbpp import MBPPDataset
+
 
 
 class CodeEvaluator(Evaluator):
@@ -94,33 +96,27 @@ class CodeEvaluator(Evaluator):
     
 
     def _create_coding_prompts(self):
-        start_test_line = 1
-        end_test_line = 450
-        with open('./data/mbpp/mbpp.jsonl', 'r') as json_file:
-            json_list = list(json_file)[start_test_line-1:end_test_line]
-
+        prompts = []
         system_command = {
             "role": "system",
             "content": "You are a Python programming assistant. Your task is to write Python functions \
                         according to the user's prompt. Respond only with the necessary Python code, \
                         including python package imports if needed. Do not provide example usage, only the python function.",
         }
-        prompts = []
-        for json_str in json_list:
-            result = json.loads(json_str)
+
+        dataset = MBPPDataset()
+        for data_point in dataset:
             promt = (
                 [
                     system_command,
                     {
                         "role": "user",
-                        "content": result["text"] + f' The function should pass the following test: {result["test_list"][0]}.',
+                        "content": data_point["text"] + f' The function should pass the following test: {data_point["test_list"][0]}.',
                     }
-                ], result["test_list"][1]
+                ], data_point["test_list"][1]
             )
-            prompts.append(promt)
-        
+            prompts.append(promt)        
         return prompts
-    
 
 
     def _generate_response(self, prompt) -> Generation:
