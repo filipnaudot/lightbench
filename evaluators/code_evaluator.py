@@ -51,7 +51,7 @@ class CodeEvaluator(Evaluator):
         Printer.print_cyan(f"\rTests Passed: {self.passed_test}/{self.num_test} ({percentage:.2f}%)", end='')
 
 
-    def _preprocess_data(self, data):
+    def _preprocess_generation(self, data):
         if f"```python" in data:
             data = data[data.find(f"```python") + len(f"```python"):]
             data = data[:data.find("```")]
@@ -157,7 +157,7 @@ class CodeEvaluator(Evaluator):
                                      generation.ttft,
                                      generation.peak_memory_usage,
                                      generation.avg_power_usage)
-            extracted_code = self._preprocess_data(generation.response).strip()
+            extracted_code = self._preprocess_generation(generation.response).strip()
             passed, message = self._validate_code(extracted_code, test, 0)
 
             if self.few_shot and not passed:
@@ -172,7 +172,7 @@ class CodeEvaluator(Evaluator):
                                             generation.ttft,
                                             generation.peak_memory_usage,
                                             generation.avg_power_usage)
-                    extracted_code = self._preprocess_data(generation.response).strip()
+                    extracted_code = self._preprocess_generation(generation.response).strip()
                     passed, message = self._validate_code(extracted_code, test, shots)
 
                     prompt = self._create_few_shot_prompt(prompt, generation.response, message)
