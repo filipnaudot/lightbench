@@ -15,12 +15,11 @@ from utils import Printer
 
 
 load_dotenv()
-hf_token = os.getenv("HUGGINGFACE_TOKEN")
 model_id = os.getenv("MODEL_NAME")
 
 
 app = FastAPI()
-model_loader = LLamaModelLoader(model_id, quantize=True, hf_token=hf_token)
+model_loader = LLamaModelLoader(model_id, quantize=True)
 
 
 class GenerateRequest(BaseModel):
