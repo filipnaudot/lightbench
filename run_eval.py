@@ -8,7 +8,7 @@ from evaluators.text_evaluator import TextEvaluator
 from evaluators.cv_bias_evaluator import CVBiasEvaluator
 from metrics.llm_judge import LLMJudge
 
-from loaders.model_loaders import LLamaModelLoader
+from loaders.llama_loader import LLamaModelLoader
 from loaders.openai_loader import OpenAILoader
 
 
@@ -24,6 +24,7 @@ def evaluate_code():
     for model, quantize, few_shot in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n    few-shot: {str(few_shot)}\n")
         model_loader = LLamaModelLoader(model, quantize)
+        # model_loader = OpenAILoader("gpt-4o-mini")
         code_evaluator = CodeEvaluator(model_loader, quantize=quantize, few_shot=few_shot, verbose=False)
         code_evaluator.run()
         code_evaluator.print_summary()

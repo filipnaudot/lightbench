@@ -10,7 +10,7 @@ from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from loaders.model_loaders import LLamaModelLoader
+from loaders.llama_loader import LLamaModelLoader
 from utils import Printer
 
 

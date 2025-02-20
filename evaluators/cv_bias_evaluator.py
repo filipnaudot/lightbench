@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from utils import Printer
 from evaluators.evaluator import Evaluator
 
-from loaders.model_loaders import LLamaModelLoader
+from loaders.llama_loader import LLamaModelLoader
 from loaders.openai_loader import OpenAILoader
 from loaders.generation import Generation
 
