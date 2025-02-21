@@ -13,13 +13,15 @@ class LLMServiceLoader(ABC):
         Generate text based on the given prompt and max tokens.
         """
         pass
-
+    
+    @abstractmethod
     def name(self) -> str:
         """
         Returns the name of the model.
         """
         pass
 
+    @abstractmethod
     def is_local(slef) -> bool:
         """
         Returns true if using a local model, false if using an API.
