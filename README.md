@@ -6,6 +6,8 @@
     <p>
         <img src="https://img.shields.io/badge/Ubuntu-20.04-orange">
         <img src="https://img.shields.io/badge/python->=3.11.3-blue">
+        <img src="https://img.shields.io/badge/License-MIT-blue.svg">
+        <!-- <img src="https://img.shields.io/badge/version-1.0.0-blue)"> -->
         <br>
         <img src="https://img.shields.io/badge/-HuggingFace-FDEE21?style=for-the-badge&logo=HuggingFace&logoColor=black">
         <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white">
@@ -13,53 +15,61 @@
 </div>
 
 
-# LLM Benchmark Framework
+# lightbench
+*A lightweight benchmarking framework for LLMs.*
 
-## Human Evaluation
-Human evaluation is straightforward with the interactive chat interface, enabling users to interact with the model in real-time and assess its responses in a conversational setting.
+## Table of Contents
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Code Structure](#code-structure)
+- [Contributing](#contributing)
+- [Citation](#citation)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
-### Chat Example
-Example of a chat using [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct), running on a GTX 1080 TI.
+## Overview
+**lightbench** is designed to offer both interactive and automated benchmarking for large language models, enabling comprehensive evaluation of code generation and question answering capabilities.
 
-![Demo of Terminal Chat Interface](./readme_assets/demo.gif)
+## Key Features
+- **Human Evaluation:** Interactive chat interface.
+- **Automatic Evaluations:** Automated tests for code and text outputs.
+- **Extensible Architecture:** Easy integration of new evaluators and metrics.
 
+## Installation
+1. **Dependencies:**  
+   Ensure you have Python 3.8+ installed.
+2. **Setup Environment:**  
+   Run the installation script:
+   ```bash
+   bash install_dependencies.sh
+   ```
+3. **Configure Environment:**  
+   Create a `.env` file with your `OPENAI_API_KEY`, `HUGGINGFACE_TOKEN`, and `MODEL_NAME`.
 
-## Automatic Evaluations
-This framework supports automatic evaluation for:
-1. **Code Generation**: Measure the model's ability to generate syntactically correct and functional code.
-2. **Text Generation (Question Answering)**: Evaluate the model's performance in answering questions using the LLM-as-a-judge technique.
+## Usage
+- **Interactive Chat:**  
+  Run `chat.py` to start the chat interface. This will use the model specified by `MODEL_NAME` in the `.env` file. Below is an example of a chat using [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct), running on a GTX 1080 TI.
+  ![Demo of Terminal Chat Interface](./readme_assets/demo.gif)
 
+- **Automated Evaluations:**  
+  Execute `run_eval.py` to perform evaluations.
 
-## Getting Started
-**1. Install the required dependencies by running the following commands:**
-```bash
-bash install_dependencies.sh
-```
-This script **creates a Python virtual environment** and installs all required dependencies within it.
+## Code Structure
+- **api:** API definitions and endpoints.
+- **evaluators:** Modules for both code and text evaluation.
+- **loaders:** Tools to load and manage models.
+- **metric:** Available metrics for local and API based models.
 
-**2. Activating the Virtual Environment**
+<!-- ## Contributing
+We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues, pull requests, and feature ideas.  
+Questions or suggestions? Open an issue or join our discussions. -->
 
-After running the installation script, you can activate the virtual environment using the command provided at the end of the script.
+## Citation
+If you use lightbench in your research, please cite it as follows:
 
-**3. Creating the .env File**
-
-To enable the framework to function correctly, you need to create a .env file in the root directory of the project. The file should include the following keys:
-```bash
-OPENAI_API_KEY=
-HUGGINGFACE_TOKEN=
-MODEL_NAME=
-```
-`OPENAI_API_KEY`: Your OpenAI API key, required for text evaluation.
-
-`HUGGINGFACE_TOKEN`: Your Hugging Face token, used for all evaluations if you are not using your own model loader.
-
-`MODEL_NAME`: Specifies the model to use in the **chat.py** script for interactive chat.
-
-
-## 📝 Cite this work
-### Paper
-
-If you refer to the research paper related to this project, please cite:
+**Paper.** If you refer to the research paper related to this project, please cite:
 ```bibtex
 @inproceedings{naudot2025performance,
   author    = {Filip Naudot},
@@ -72,8 +82,7 @@ If you refer to the research paper related to this project, please cite:
 }
 ```
 
-
-### Code Repository
+**Repository.**
 If you use **lightbench** in your research, please cite the repository:
 ```bibtex
 @misc{lightbench2025,
@@ -83,3 +92,6 @@ If you use **lightbench** in your research, please cite the repository:
   howpublished = {\url{https://github.com/filipnaudot/lightbench}},
 }
 ```
+
+## License
+Distributed under the MIT License. See `LICENSE` for more information.
