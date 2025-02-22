@@ -43,7 +43,7 @@ def evaluate_text():
     for model, quantize, _ in models:
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n")
         model_loader = LLamaModelLoader(model, quantize)
-        text_evaluator = TextEvaluator(model_loader, judge, quantize=quantize, verbose=False)
+        text_evaluator = TextEvaluator(model_loader, judge, verbose=False)
         text_evaluator.run()
         text_evaluator.print_summary()
         model_loader.cleanup()

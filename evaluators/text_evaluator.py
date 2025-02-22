@@ -11,10 +11,9 @@ from loaders.generation import Generation
 
 
 class TextEvaluator(Evaluator):
-    def __init__(self, model_loader: LLMServiceLoader, judge:LLMJudge, quantize:bool = False, verbose:bool = False):
+    def __init__(self, model_loader: LLMServiceLoader, judge:LLMJudge, verbose:bool = False):
         super().__init__(verbose)
 
-        self.quantize:bool = quantize
         self.judge:LLMJudge = judge
 
         self.num_test:int = 0
@@ -156,7 +155,7 @@ class TextEvaluator(Evaluator):
         if self.model_loader.is_local():
             summary.update({
                 "average_ttft_sec": round(avg_ttft, 2),
-                "quantize": str(self.quantize),
+                "quantize": str(self.model_loader.quantize),
                 "average_mem_usage_GB": round(avg_memory_usage, 2),
                 "average_power_usage_W": round(avg_power_usage, 2),
             })
@@ -164,7 +163,7 @@ class TextEvaluator(Evaluator):
         print(json.dumps(summary, indent=4))
 
         os.makedirs("./results/question_answering", exist_ok=True)
-        with open(f"./results/question_answering/{self.model_loader.name().replace('/','-')}---quantize={str(self.quantize)}.json", "w") as file:
+        with open(f"./results/question_answering/{self.model_loader.name().replace('/','-')}---quantize={str(self.model_loader.quantize)}.json", "w") as file:
             file.write(json.dumps(summary, indent=4))
 
 
