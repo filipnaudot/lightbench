@@ -25,7 +25,7 @@ def evaluate_code():
         print(f"\n---------- {model} ----------\n    quantize: {str(quantize)}\n    few-shot: {str(few_shot)}\n")
         model_loader = LLamaModelLoader(model, quantize)
         # model_loader = OpenAILoader("gpt-4o-mini")
-        code_evaluator = CodeEvaluator(model_loader, quantize=quantize, few_shot=few_shot, verbose=False)
+        code_evaluator = CodeEvaluator(model_loader, few_shot=few_shot, verbose=False)
         code_evaluator.run()
         code_evaluator.print_summary()
         model_loader.cleanup()

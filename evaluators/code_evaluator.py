@@ -16,11 +16,10 @@ from data.mbpp.mbpp import MBPPDataset
 
 
 class CodeEvaluator(Evaluator):
-    def __init__(self, model_loader: LLMServiceLoader, quantize=False, few_shot=False, verbose=False):
+    def __init__(self, model_loader: LLMServiceLoader, few_shot=False, verbose=False):
         super().__init__(verbose)
         self.model_loader = model_loader
         self.few_shot:bool = few_shot
-        self.quantize:bool = quantize
 
         self.inference_time_list:list[float] = []
         self.ttft_list:list[float] = []
@@ -219,7 +218,7 @@ class CodeEvaluator(Evaluator):
         if self.model_loader.is_local():
             summary.update({
                 "average_ttft_sec": round(avg_ttft, 2),
-                "quantize": str(self.quantize),
+                "quantize": str(self.model_loader.quantize),
                 "average_mem_usage_GB": round(avg_memory_usage, 2),
                 "average_power_usage_W": round(avg_power_usage, 2),
             })
@@ -227,7 +226,7 @@ class CodeEvaluator(Evaluator):
         print(json.dumps(summary, indent=4))
 
         os.makedirs("./results/code_evaluation", exist_ok=True)
-        with open(f"./results/code_evaluation/{self.model_loader.name().replace('/','-')}---quantize={str(self.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
+        with open(f"./results/code_evaluation/{self.model_loader.name().replace('/','-')}---quantize={str(self.model_loader.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
             file.write(json.dumps(summary, indent=4))
     
     
