@@ -16,9 +16,10 @@ from data.mbpp.mbpp import MBPPDataset
 
 
 class CodeEvaluator(Evaluator):
-    def __init__(self, model_loader: LLMServiceLoader, few_shot=False, verbose=False):
+    def __init__(self, model_loader: LLMServiceLoader, num_test_limit: int | None = None, few_shot=False, verbose=False):
         super().__init__(verbose)
         self.model_loader = model_loader
+        self.num_test_limit = num_test_limit
         self.few_shot:bool = few_shot
 
         self.inference_time_list:list[float] = []
@@ -103,7 +104,7 @@ class CodeEvaluator(Evaluator):
                         including python package imports if needed. Do not provide example usage, only the python function.",
         }
 
-        dataset = MBPPDataset()
+        dataset = MBPPDataset(start=0, end=self.num_test_limit) # end=450
         for data_point in dataset:
             promt = (
                 [

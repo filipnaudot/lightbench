@@ -9,7 +9,9 @@ class MBPPDataset(DataSet):
     Each data point is a dictionary loaded from a jsonl file.
     """
 
-    def __init__(self, file_path='./data/mbpp/mbpp.jsonl', start_line=1, end_line=450):
+    def __init__(self, file_path: str = './data/mbpp/mbpp.jsonl',
+                 start: int | None = None,
+                 end: int | None = None):
         """
         Initialize the dataset.
 
@@ -18,16 +20,16 @@ class MBPPDataset(DataSet):
             start_line (int): Starting line number (1-indexed).
             end_line (int): Ending line number (inclusive).
         """
-        self.file_path = file_path
-        self.start_line = start_line
-        self.end_line = end_line
+        self.file_path: str = file_path
+        self.start: int | None = start
+        self.end: int | None = end
         self._data = None  # Lazy-loaded data
 
     def _load_data(self):
         """Load data points from the jsonl file."""
         with open(self.file_path, 'r') as json_file:
             # Adjust indices: start_line is 1-indexed while list indexing is 0-indexed.
-            lines = list(json_file)[self.start_line - 1:self.end_line]
+            lines = list(json_file)[self.start:self.end]
         data = [json.loads(line) for line in lines]
         return data
 
