@@ -11,10 +11,11 @@ from loaders.generation import Generation
 
 
 class TextEvaluator(Evaluator):
-    def __init__(self, model_loader: LLMServiceLoader, judge:LLMJudge, verbose:bool = False):
+    def __init__(self, model_loader: LLMServiceLoader, judge:LLMJudge, num_test_limit: int | None = None, verbose:bool = False):
         super().__init__(verbose)
 
         self.judge:LLMJudge = judge
+        self.num_test_limit: int | None = num_test_limit
 
         self.num_test:int = 0
         self.inference_time_list:list[float] = []
