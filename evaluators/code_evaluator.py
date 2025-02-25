@@ -65,7 +65,8 @@ class CodeEvaluator(Evaluator):
 
 
     def _validate_code(self, code, test, shots):
-        indent_format = f"\033[{65}G" if shots > 0 else f"\033[{60}G"
+        # indent_format = f"\033[{65}G" if shots > 0 else f"\033[{60}G"
+        indent_format = "\t\t" if shots > 0 else f"\t"
         end = "" if self.verbose else "\n"
 
         full_code_to_execute = f"{code}\n\n{test}"
