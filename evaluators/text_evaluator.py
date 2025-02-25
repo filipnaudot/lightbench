@@ -50,10 +50,10 @@ class TextEvaluator(Evaluator):
 
 
     def _create_qa_prompts(self):
-        start_test_line = 1
-        end_test_line = 100
+        start_test_line = 0
+        end_test_line = self.num_test_limit
         with open('./data/hotpotqa/hotpot_test_fullwiki_v1-first-500.jsonl', 'r') as json_file:
-            json_list = list(json_file)[start_test_line-1:end_test_line]
+            json_list = list(json_file)[start_test_line:end_test_line]
         
         system_command = {
             "role": "system",
@@ -94,13 +94,7 @@ class TextEvaluator(Evaluator):
     
 
     def _get_llm_judge_score(self, response, prompt):
-        # print(f"PROMPT:\n{prompt}\n\nRESPONS:\n{response}\n\n")
-        score = self.judge.get_score(prompt, response)
-
-        indent_format = f"\033[{60}G"
-        Printer.print_yellow(f"{indent_format} {score}", end='\n')
-        
-        return score
+        return self.judge.get_score(prompt, response)
     
 
     def run(self):
@@ -115,7 +109,7 @@ class TextEvaluator(Evaluator):
             
             score = self._get_llm_judge_score(generation.response, prompt)
             self.llm_judge_score_list.append(score)
-
+            Printer.print_yellow(f"\t{score}")
             self.num_test += 1
             self._print_test_status()
         print()
