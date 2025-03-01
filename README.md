@@ -54,7 +54,7 @@
   ![Demo of Terminal Chat Interface](./readme_assets/demo.gif)
 
 - **Automated Evaluations:**  
-  Execute `run_eval.py` to perform evaluations.
+  See examples in [`examples.ipynb`](examples.ipynb).
 
 ## Code Structure
 - **api:** API definitions and endpoints.
