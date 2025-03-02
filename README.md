@@ -56,7 +56,7 @@
 - **Automated Evaluations:**  
   See examples in [`examples.ipynb`](examples.ipynb).
 
-## Code Structure
+## Project Structure
 - **api:** API definitions and endpoints.
 - **evaluators:** Modules for both code and text evaluation.
 - **loaders:** Tools to load and manage models.
