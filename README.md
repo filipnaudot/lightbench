@@ -67,8 +67,6 @@ We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for 
 Questions or suggestions? Open an issue or join our discussions. -->
 
 ## Citation
-If you use lightbench in your research, please cite it as follows:
-
 **Paper.** If you refer to the research paper related to this project, please cite:
 ```bibtex
 @inproceedings{naudot2025performance,
