@@ -57,14 +57,14 @@
   See examples in [`examples.ipynb`](examples.ipynb).
 
 ## Project Structure
-- **api:** API definitions and endpoints.
-- **evaluators:** Modules for both code and text evaluation.
-- **loaders:** Tools to load and manage models.
-- **metric:** Available metrics for local and API based models.
+- **data**: Benchmark datasets.
+- **evaluators**: Modules for both code and text evaluation.
+- **loaders**: Tools to load and manage models.
+- **metric**: Available metrics for local and API based models.
 
 <!-- ## Contributing
 We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues, pull requests, and feature ideas.  
-Questions or suggestions? Open an issue or join our discussions. -->
+Questions or suggestions? Open an issue. -->
 
 ## Citation
 **Paper.** If you refer to the research paper related to this project, please cite:
