@@ -4,10 +4,9 @@ import json
 from utils import Printer
 from evaluators.evaluator import Evaluator
 from metrics.llm_judge import LLMJudge
-
 from loaders.loader import LLMServiceLoader
 from loaders.generation import Generation
-
+from data.hotpotqa.hotpotqa import HotpotQA
 
 
 class TextEvaluator(Evaluator):
@@ -50,23 +49,14 @@ class TextEvaluator(Evaluator):
 
 
     def _create_qa_prompts(self):
-        start_test_line = 0
-        end_test_line = self.num_test_limit
-        with open('./data/hotpotqa/hotpot_test_fullwiki_v1-first-500.jsonl', 'r') as json_file:
-            json_list = list(json_file)[start_test_line:end_test_line]
-        
+        prompts = []
         system_command = {
             "role": "system",
             "content": "You are a question-answering assistant. Answer the user's question \
                         based on the provided context. Respond with only the answer in a single sentence.",
         }
-        prompts = []
-        for json_str in json_list:
-            result = json.loads(json_str)
-            question = result["question"]
-            context = "".join(["".join(sentences) for para in result["context"] for sentences in para[1]])
-            answer = None # result["answer"]
-            
+        dataset = HotpotQA(start=0, end=self.num_test_limit)
+        for question, context in dataset:
             prompt = (
                 [
                     system_command,
@@ -74,11 +64,9 @@ class TextEvaluator(Evaluator):
                         "role": "user",
                         "content": f'Answer the question based on the following context: "{context}". The question is: "{question}"',
                     }
-                ],
-                answer
+                ]
             )
             prompts.append(prompt)
-        
         return prompts
 
 
@@ -99,7 +87,7 @@ class TextEvaluator(Evaluator):
 
     def run(self):
         prompts = self._create_qa_prompts()
-        for index, (prompt, refrence_answer) in enumerate(prompts):
+        for index, prompt in enumerate(prompts):
             generation: Generation = self._generate_response(prompt)
             self._print_test_metrics(index,
                                      generation.inferece_time,
