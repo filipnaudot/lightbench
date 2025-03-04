@@ -106,15 +106,15 @@ class CodeEvaluator(Evaluator):
         }
 
         dataset = MBPPDataset(start=0, end=self.num_test_limit) # end=450
-        for data_point in dataset:
+        for text, test_1, test_2, _ in dataset:
             promt = (
                 [
                     system_command,
                     {
                         "role": "user",
-                        "content": data_point["text"] + f' The function should pass the following test: {data_point["test_list"][0]}.',
+                        "content": text + f' The function should pass the following test: {test_1}.',
                     }
-                ], data_point["test_list"][1]
+                ], test_2
             )
             prompts.append(promt)        
         return prompts

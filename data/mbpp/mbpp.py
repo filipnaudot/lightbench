@@ -28,9 +28,14 @@ class MBPPDataset(DataSet):
     def _load_data(self):
         """Load data points from the jsonl file."""
         with open(self.file_path, 'r') as json_file:
-            # Adjust indices: start_line is 1-indexed while list indexing is 0-indexed.
             lines = list(json_file)[self.start:self.end]
-        data = [json.loads(line) for line in lines]
+        data = []
+        for line in lines:
+            json_line = json.loads(line)
+            data.append((json_line["text"],
+                         json_line["test_list"][0],
+                         json_line["test_list"][1],
+                         json_line["test_list"][2]))
         return data
 
     def __iter__(self):
