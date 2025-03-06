@@ -39,7 +39,7 @@
 
 ## Installation
 1. **Dependencies:**  
-   Ensure you have Python 3.8+ installed.
+   Ensure you have Python 3.11+ installed.
 2. **Setup Environment:**  
    Run the installation script:
    ```bash
