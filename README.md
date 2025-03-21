@@ -62,9 +62,8 @@
 - **loaders**: Tools to load and manage models.
 - **metric**: Available metrics for local and API based models.
 
-<!-- ## Contributing
-We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues, pull requests, and feature ideas.  
-Questions or suggestions? Open an issue. -->
+## Contributing
+We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues, pull requests, and feature ideas.
 
 ## Citation
 **Paper.** If you refer to the research paper related to this project, please cite:
