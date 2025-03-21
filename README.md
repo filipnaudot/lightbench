@@ -57,7 +57,7 @@
 
 ## Project Structure
 - **data**: Benchmark datasets.
-- **evaluators**: Modules for both code and text evaluation.
+- **evaluators**: Modules for evaluation.
 - **loaders**: Tools to load and manage models.
 - **metric**: Available metrics for local and API based models.
 
