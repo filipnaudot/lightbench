@@ -5,12 +5,18 @@ import time
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from utils import Printer
 from loaders.loader import LLMServiceLoader
 from loaders.generation import Generation
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
+if not OPENAI_API_KEY:
+    Printer.print_red(
+        "You need to specify your OpenAI API key in a '.env' file in the root directory to use the OpenAILoader.\n"
+        "Make sure it is defined as: OPENAI_API_KEY=your_key_here"
+    )
+    exit(1) 
 
 
 class OpenAILoader(LLMServiceLoader):
