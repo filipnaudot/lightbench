@@ -228,7 +228,7 @@ class CodeEvaluator(Evaluator):
         print(json.dumps(summary, indent=4))
 
         os.makedirs("./results/code_evaluation", exist_ok=True)
-        with open(f"./results/code_evaluation/{self.model_loader.name().replace('/','-')}---quantize={str(self.model_loader.quantize)}--few_shot={str(self.few_shot)}.json", "w") as file:
+        with open(f"./results/code_evaluation/{self.model_loader.name().replace('/','-')}.json", "w") as file:
             file.write(json.dumps(summary, indent=4))
     
     

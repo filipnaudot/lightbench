@@ -146,7 +146,7 @@ class TextEvaluator(Evaluator):
         print(json.dumps(summary, indent=4))
 
         os.makedirs("./results/question_answering", exist_ok=True)
-        with open(f"./results/question_answering/{self.model_loader.name().replace('/','-')}---quantize={str(self.model_loader.quantize)}.json", "w") as file:
+        with open(f"./results/question_answering/{self.model_loader.name().replace('/','-')}.json", "w") as file:
             file.write(json.dumps(summary, indent=4))
 
 
