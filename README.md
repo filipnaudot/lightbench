@@ -27,7 +27,6 @@
 - [Contributing](#contributing)
 - [Citation](#citation)
 - [License](#license)
-- [Acknowledgments](#acknowledgments)
 
 ## Overview
 **lightbench** is designed to offer both interactive and automated benchmarking for large language models, enabling comprehensive evaluation of code generation and question answering capabilities.
