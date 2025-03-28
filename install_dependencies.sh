@@ -67,16 +67,20 @@ else
     pip install pynvml
 fi
 
-
-pip install transformers
+# General dependencies
 pip install python-dotenv
+# Dependencies for local models
+pip install transformers
 pip install bitsandbytes
 pip install 'accelerate>=0.26.0'
 pip install nvidia-ml-py
+# API
 pip install openai
+pip install mistralai
 pip install fastapi uvicorn
 
 echo "All dependencies have been installed successfully."
+
 
 # Deactivate the virtual environment
 deactivate
