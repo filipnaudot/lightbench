@@ -23,7 +23,7 @@
 - [Key Features](#key-features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Code Structure](#code-structure)
+- [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [Citation](#citation)
 - [License](#license)
