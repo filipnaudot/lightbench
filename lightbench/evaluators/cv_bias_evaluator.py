@@ -7,12 +7,12 @@ from collections import Counter
 from typing import List, Dict
 
 from dotenv import load_dotenv
-from utils import Printer
-from evaluators.evaluator import Evaluator
+from lightbench.utils import Printer
+from lightbench.evaluators.evaluator import Evaluator
 
-from loaders.llama_loader import LLamaModelLoader
-from loaders.openai_loader import OpenAILoader
-from loaders.generation import Generation
+from lightbench.loaders.llama_loader import LLamaModelLoader
+from lightbench.loaders.openai_loader import OpenAILoader
+from lightbench.loaders.generation import Generation
 
 load_dotenv()
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")

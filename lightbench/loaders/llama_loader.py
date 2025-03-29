@@ -12,9 +12,9 @@ from transformers import (
 )
 import torch
 
-from loaders.loader import LLMServiceLoader
-from loaders.generation import Generation
-from metrics.metrics import TTFT, VRAM, PowerUsage
+from lightbench.loaders.loader import LLMServiceLoader
+from lightbench.loaders.generation import Generation
+from lightbench.metrics.metrics import TTFT, VRAM, PowerUsage
 
 from dotenv import load_dotenv
 load_dotenv()

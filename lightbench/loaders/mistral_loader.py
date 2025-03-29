@@ -5,9 +5,9 @@ import time
 from dotenv import load_dotenv
 from mistralai import Mistral
 
-from utils import Printer
-from loaders.loader import LLMServiceLoader
-from loaders.generation import Generation
+from lightbench.utils import Printer
+from lightbench.loaders.loader import LLMServiceLoader
+from lightbench.loaders.generation import Generation
 
 load_dotenv()
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")

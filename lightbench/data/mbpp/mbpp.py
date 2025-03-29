@@ -1,35 +1,44 @@
+from pathlib import Path
 import json
 
-from data.data_set import DataSet
+from lightbench.data.data_set import DataSet
 
 
-class HotpotQA(DataSet):
-    def __init__(self, file_path: str = './data/hotpotqa/hotpot_test_fullwiki_v1-first-500.jsonl',
+class MBPPDataset(DataSet):
+    """
+    A dataset for managing raw MBPP data.
+    Each data point is a dictionary loaded from a jsonl file.
+    """
+
+    def __init__(self,
+                 file_path: str = None,
                  start: int | None = None,
                  end: int | None = None):
         """
         Initialize the dataset.
 
         Args:
-            file_path (str): Path to the HotpotQA jsonl file.
+            file_path (str): Path to the MBPP jsonl file.
             start_line (int): Starting line number (1-indexed).
             end_line (int): Ending line number (inclusive).
         """
-        self.file_path: str = file_path
+        if file_path is None:
+            self.file_path = Path(__file__).parent / 'mbpp.jsonl'
         self.start: int | None = start
         self.end: int | None = end
         self._data = None  # Lazy-loaded data
-    
+
     def _load_data(self):
         """Load data points from the jsonl file."""
         with open(self.file_path, 'r') as json_file:
             lines = list(json_file)[self.start:self.end]
         data = []
         for line in lines:
-            result = json.loads(line)
-            question = result["question"]
-            context = "".join(["".join(sentences) for para in result["context"] for sentences in para[1]])
-            data.append((question, context))
+            json_line = json.loads(line)
+            data.append((json_line["text"],
+                         json_line["test_list"][0],
+                         json_line["test_list"][1],
+                         json_line["test_list"][2]))
         return data
 
     def __iter__(self):

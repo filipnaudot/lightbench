@@ -5,13 +5,13 @@ from contextlib import redirect_stdout
 import signal
 import json
 
-from utils import Printer
-from evaluators.evaluator import Evaluator
+from lightbench.utils import Printer
+from lightbench.evaluators.evaluator import Evaluator
 
-from loaders.loader import LLMServiceLoader
-from loaders.generation import Generation
+from lightbench.loaders.loader import LLMServiceLoader
+from lightbench.loaders.generation import Generation
 
-from data.mbpp.mbpp import MBPPDataset
+from lightbench.data.mbpp.mbpp import MBPPDataset
 
 
 

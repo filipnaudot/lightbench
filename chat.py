@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 import torch
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
-from utils import Colors
-from loaders.llama_loader import LLamaModelLoader
+from lightbench.utils import Colors
+from lightbench.loaders.llama_loader import LLamaModelLoader
 
 
 

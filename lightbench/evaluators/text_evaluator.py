@@ -1,12 +1,12 @@
 import os
 import json
 
-from utils import Printer
-from evaluators.evaluator import Evaluator
-from metrics.llm_judge import LLMJudge
-from loaders.loader import LLMServiceLoader
-from loaders.generation import Generation
-from data.hotpotqa.hotpotqa import HotpotQA
+from lightbench.utils import Printer
+from lightbench.evaluators.evaluator import Evaluator
+from lightbench.metrics.llm_judge import LLMJudge
+from lightbench.loaders.loader import LLMServiceLoader
+from lightbench.loaders.generation import Generation
+from lightbench.data.hotpotqa.hotpotqa import HotpotQA
 
 
 class TextEvaluator(Evaluator):

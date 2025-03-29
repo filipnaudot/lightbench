@@ -64,20 +64,22 @@ else
     esac
     echo "Installing PyTorch with CUDA support ($TORCH_CUDA)..."
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/$TORCH_CUDA
-    pip install pynvml
+    # pip install pynvml
 fi
 
-# General dependencies
-pip install python-dotenv
-# Dependencies for local models
-pip install transformers
-pip install bitsandbytes
-pip install 'accelerate>=0.26.0'
-pip install nvidia-ml-py
-# API
-pip install openai
-pip install mistralai
-pip install fastapi uvicorn
+pip install -e .
+
+# # General dependencies
+# pip install python-dotenv
+# # Dependencies for local models
+# pip install transformers
+# pip install bitsandbytes
+# pip install 'accelerate>=0.26.0'
+# pip install nvidia-ml-py
+# # API
+# pip install openai
+# pip install mistralai
+# pip install fastapi uvicorn
 
 echo "All dependencies have been installed successfully."
 
