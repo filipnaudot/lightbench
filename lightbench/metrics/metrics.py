@@ -20,7 +20,25 @@ class TTFT:
             break
 
 
-class VRAM:
+class VRAM_NVML:
+    def __init__(self) -> None:
+        pynvml.nvmlInit()
+        self.device_handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+        self._max_memory = 0
+        self.reset()
+
+    def reset(self):
+        mem_info = pynvml.nvmlDeviceGetMemoryInfo(self.device_handle)
+        self._max_memory = mem_info.used
+
+    def measure_vram(self):
+        mem_info = pynvml.nvmlDeviceGetMemoryInfo(self.device_handle)
+        if mem_info.used > self._max_memory:
+            self._max_memory = mem_info.used
+        return self._max_memory / (1024 ** 3)
+
+
+class VRAM_TORCH:
     def __init__(self) -> None:
         self.reset()
 
@@ -28,9 +46,8 @@ class VRAM:
         torch.cuda.reset_peak_memory_stats()
 
     def measure_vram(self):
-        # Measure peak GPU memory usage (in GB)
         return torch.cuda.max_memory_allocated() / (1024 ** 3)
-    
+  
 
 class PowerUsage:
     def __init__(self, gpu_index=0, DEBUG:bool = False):

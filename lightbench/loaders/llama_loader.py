@@ -14,7 +14,7 @@ import torch
 
 from lightbench.loaders.loader import LLMServiceLoader
 from lightbench.loaders.generation import Generation
-from lightbench.metrics.metrics import TTFT, VRAM, PowerUsage
+from lightbench.metrics.metrics import TTFT, VRAM_TORCH, VRAM_NVML, PowerUsage
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -59,7 +59,7 @@ class LLamaModelLoader(LLMServiceLoader):
     
 
     def generate(self, prompt, max_tokens: int = 512):
-        vram_handler = VRAM()
+        vram_handler = VRAM_TORCH()
         ttft_handler = TTFT(self.tokenizer)
         power_handler = PowerUsage()
         power_handler.measure_power()
