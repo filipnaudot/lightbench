@@ -1,15 +1,15 @@
-# Contributing to Lightbench
+# Contributing to lightbench
 
 ## How Can You Contribute?
-Given the nascent and evolving nature of Lightbench, we are particularly interested in collaborative discussions to shape its future. Here are ways you can get involved:
+Given the nascent and evolving nature of lightbench, we are particularly interested in collaborative discussions to shape its future. Here are ways you can get involved:
 
-- **Discuss Ideas and Future Directions**: If you have innovative ideas or suggestions for Lightbench, please reach out via email at filip.naudot@gmail.com to initiate a discussion on potential enhancements and the project's trajectory.
+- **Discuss Ideas and Future Directions**: If you have innovative ideas or suggestions for lightbench, please reach out via email at filip.naudot@gmail.com to initiate a discussion on potential enhancements and the project's trajectory.
 
-- **Add New Benchmarks**: Lightbench is designed as a framework to build and integrate various benchmarks, not just to run existing ones. We welcome contributions that provide new example benchmarks or base-benchmarks to expand our evaluation capabilities.
+- **Add New Benchmarks**: lightbench is designed as a framework to build and integrate various benchmarks, not just to run existing ones. We welcome contributions that provide new example benchmarks or base-benchmarks to expand our evaluation capabilities.
 
 - **Report Bugs**: Identify and document any issues or bugs you encounter to help us improve the framework's stability and performance.
 
-- **Suggest Enhancements**: Propose new features or improvements that could enrich Lightbench's functionality and user experience.
+- **Suggest Enhancements**: Propose new features or improvements that could enrich lightbench's functionality and user experience.
 
 - **Improve Documentation**: Assist in refining and expanding our documentation to make it more comprehensive and user-friendly.
 
@@ -26,4 +26,4 @@ To begin contributing:
 
 5. Commit Your Changes: Commit your modifications with clear and concise commit messages.
 
-6. Open a Pull Request: Submit a pull request to the main Lightbench repository, detailing the changes and their purpose.
+6. Open a Pull Request: Submit a pull request to the main lightbench repository, detailing the changes and their purpose.
