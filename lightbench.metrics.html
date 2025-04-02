@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -241,14 +241,215 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="lightbench-metrics">
-<h1>lightbench.metrics<a class="headerlink" href="#lightbench-metrics" title="Link to this heading">¶</a></h1>
+          <section id="module-lightbench.metrics.llm_judge">
+<span id="lightbench-metrics"></span><h1>lightbench.metrics<a class="headerlink" href="#module-lightbench.metrics.llm_judge" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="lightbench.metrics.llm_judge.LLMJudge">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.metrics.llm_judge.</span></span><span class="sig-name descname"><span class="pre">LLMJudge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">judge_model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpt-4o-mini'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.llm_judge.LLMJudge" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.llm_judge.LLMJudge.get_score">
+<span class="sig-name descname"><span class="pre">get_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_attempts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.llm_judge.LLMJudge.get_score" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p id="module-lightbench.metrics.metrics">Module for measuring time to first token (TTFT), GPU memory usage, and GPU power usage.</p>
+<dl class="simple">
+<dt>This module provides the following classes:</dt><dd><ul class="simple">
+<li><p>TTFT: Measures the time to first token during text generation.</p></li>
+<li><p>VRAM_NVML: Monitors GPU VRAM usage using NVIDIA’s NVML library.</p></li>
+<li><p>VRAM_TORCH: Measures GPU VRAM usage using PyTorch CUDA utilities.</p></li>
+<li><p>PowerUsage: Measures and tracks GPU power usage via NVML.</p></li>
+</ul>
+</dd>
+<dt>Dependencies:</dt><dd><ul class="simple">
+<li><p>time: For performance timing.</p></li>
+<li><p>torch: For GPU memory measurements.</p></li>
+<li><p>pynvml: For interfacing with NVIDIA Management Library.</p></li>
+<li><p>transformers: For text streaming with transformer models.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.PowerUsage">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.metrics.metrics.</span></span><span class="sig-name descname"><span class="pre">PowerUsage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gpu_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DEBUG</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.PowerUsage" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to measure and track GPU power usage using NVML.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.PowerUsage.DEBUG">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><a class="headerlink" href="#lightbench.metrics.metrics.PowerUsage.DEBUG" title="Link to this definition">¶</a></dt>
+<dd><p>Flag to enable debug output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.PowerUsage.handle">
+<span class="sig-name descname"><span class="pre">handle</span></span><a class="headerlink" href="#lightbench.metrics.metrics.PowerUsage.handle" title="Link to this definition">¶</a></dt>
+<dd><p>NVML handle for the specified GPU.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.PowerUsage.power_samples">
+<span class="sig-name descname"><span class="pre">power_samples</span></span><a class="headerlink" href="#lightbench.metrics.metrics.PowerUsage.power_samples" title="Link to this definition">¶</a></dt>
+<dd><p>List to store power usage measurements in watts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.PowerUsage.get_average">
+<span class="sig-name descname"><span class="pre">get_average</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.PowerUsage.get_average" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate and return the average GPU power usage from the recorded samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Average power usage in watts. Returns 0.0 if no samples exist.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.PowerUsage.kill">
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.PowerUsage.kill" title="Link to this definition">¶</a></dt>
+<dd><p>Shutdown NVML to clean up resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.PowerUsage.measure_power">
+<span class="sig-name descname"><span class="pre">measure_power</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.PowerUsage.measure_power" title="Link to this definition">¶</a></dt>
+<dd><p>Measure the current GPU power usage and record the sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current GPU power usage in watts. Returns 0 if measurement is unsupported or fails.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.TTFT">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.metrics.metrics.</span></span><span class="sig-name descname"><span class="pre">TTFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.TTFT" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for measuring Time To First Token (TTFT) during text generation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.TTFT.tokenizer">
+<span class="sig-name descname"><span class="pre">tokenizer</span></span><a class="headerlink" href="#lightbench.metrics.metrics.TTFT.tokenizer" title="Link to this definition">¶</a></dt>
+<dd><p>A tokenizer instance used for encoding text.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.TTFT.streamer">
+<span class="sig-name descname"><span class="pre">streamer</span></span><a class="headerlink" href="#lightbench.metrics.metrics.TTFT.streamer" title="Link to this definition">¶</a></dt>
+<dd><p>A TextIteratorStreamer instance that streams text output.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.TTFT.ttft">
+<span class="sig-name descname"><span class="pre">ttft</span></span><a class="headerlink" href="#lightbench.metrics.metrics.TTFT.ttft" title="Link to this definition">¶</a></dt>
+<dd><p>Float representing the time (in seconds) from start to first token.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.TTFT.measure_ttft">
+<span class="sig-name descname"><span class="pre">measure_ttft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.TTFT.measure_ttft" title="Link to this definition">¶</a></dt>
+<dd><p>Measure the time to first token (TTFT) for a text generation stream.</p>
+<p>This function iterates over the text streamer and sets the TTFT value
+based on the elapsed time since the provided start_time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>start_time</strong> – The starting time (from time.perf_counter()) when generation began.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_NVML">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.metrics.metrics.</span></span><span class="sig-name descname"><span class="pre">VRAM_NVML</span></span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_NVML" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to monitor GPU VRAM usage using NVIDIA’s NVML.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_NVML.device_handle">
+<span class="sig-name descname"><span class="pre">device_handle</span></span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_NVML.device_handle" title="Link to this definition">¶</a></dt>
+<dd><p>NVML handle for the first GPU device.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_NVML._max_memory">
+<span class="sig-name descname"><span class="pre">_max_memory</span></span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_NVML._max_memory" title="Link to this definition">¶</a></dt>
+<dd><p>Tracks the maximum memory used (in bytes).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_NVML.measure_vram">
+<span class="sig-name descname"><span class="pre">measure_vram</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_NVML.measure_vram" title="Link to this definition">¶</a></dt>
+<dd><p>Measure and return the peak VRAM usage in gigabytes (GB).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Maximum VRAM usage (in GB) observed so far.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_NVML.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_NVML.reset" title="Link to this definition">¶</a></dt>
+<dd><p>Reset the maximum memory usage by reading the current used memory.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_TORCH">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.metrics.metrics.</span></span><span class="sig-name descname"><span class="pre">VRAM_TORCH</span></span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to measure GPU VRAM usage using PyTorch’s CUDA utilities.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_TORCH.measure_vram">
+<span class="sig-name descname"><span class="pre">measure_vram</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH.measure_vram" title="Link to this definition">¶</a></dt>
+<dd><p>Return the maximum GPU memory allocated (in gigabytes).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Maximum allocated GPU memory (in GB) reported by PyTorch.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_TORCH.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH.reset" title="Link to this definition">¶</a></dt>
+<dd><p>Reset the peak GPU memory statistics.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -294,8 +495,58 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">lightbench.metrics</a><ul>
+<li><a class="reference internal" href="#lightbench.metrics.llm_judge.LLMJudge"><code class="docutils literal notranslate"><span class="pre">LLMJudge</span></code></a><ul>
+<li><a class="reference internal" href="#lightbench.metrics.llm_judge.LLMJudge.get_score"><code class="docutils literal notranslate"><span class="pre">LLMJudge.get_score()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.PowerUsage"><code class="docutils literal notranslate"><span class="pre">PowerUsage</span></code></a><ul>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.PowerUsage.DEBUG"><code class="docutils literal notranslate"><span class="pre">PowerUsage.DEBUG</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.PowerUsage.handle"><code class="docutils literal notranslate"><span class="pre">PowerUsage.handle</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.PowerUsage.power_samples"><code class="docutils literal notranslate"><span class="pre">PowerUsage.power_samples</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.PowerUsage.get_average"><code class="docutils literal notranslate"><span class="pre">PowerUsage.get_average()</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.PowerUsage.kill"><code class="docutils literal notranslate"><span class="pre">PowerUsage.kill()</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.PowerUsage.measure_power"><code class="docutils literal notranslate"><span class="pre">PowerUsage.measure_power()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.TTFT"><code class="docutils literal notranslate"><span class="pre">TTFT</span></code></a><ul>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.TTFT.tokenizer"><code class="docutils literal notranslate"><span class="pre">TTFT.tokenizer</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.TTFT.streamer"><code class="docutils literal notranslate"><span class="pre">TTFT.streamer</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.TTFT.ttft"><code class="docutils literal notranslate"><span class="pre">TTFT.ttft</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.TTFT.measure_ttft"><code class="docutils literal notranslate"><span class="pre">TTFT.measure_ttft()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_NVML"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML</span></code></a><ul>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_NVML.device_handle"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML.device_handle</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_NVML._max_memory"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML._max_memory</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_NVML.measure_vram"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML.measure_vram()</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_NVML.reset"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML.reset()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_TORCH"><code class="docutils literal notranslate"><span class="pre">VRAM_TORCH</span></code></a><ul>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_TORCH.measure_vram"><code class="docutils literal notranslate"><span class="pre">VRAM_TORCH.measure_vram()</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_TORCH.reset"><code class="docutils literal notranslate"><span class="pre">VRAM_TORCH.reset()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
