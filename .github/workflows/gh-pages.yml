@@ -19,6 +19,8 @@ jobs:
 
     - name: Install dependencies
       run: |
+        pip install --upgrade pip
+        pip install .
         pip install sphinx furo
 
     - name: Build docs
