@@ -4,9 +4,8 @@
         <img alt="lighbench logo" src="/readme_assets/lightbench_logo_darkmode.png" width="50%" height="50%">
     </picture>
     <p>
-        <img src="https://img.shields.io/badge/Ubuntu-20.04-orange">
+        <img src="https://img.shields.io/badge/docs-lightbench-blue?logo=read-the-docs">
         <img src="https://img.shields.io/badge/python->=3.11.3-blue">
-        <img src="https://img.shields.io/badge/License-MIT-blue.svg">
         <!-- <img src="https://img.shields.io/badge/version-1.0.0-blue)"> -->
         <br>
         <img src="https://img.shields.io/badge/-HuggingFace-FDEE21?style=for-the-badge&logo=HuggingFace&logoColor=black">
@@ -18,6 +17,7 @@
 # lightbench
 *A lightweight benchmarking framework for LLMs.*
 
+
 ## Table of Contents
 - [Overview](#overview)
 - [Key Features](#key-features)
@@ -27,6 +27,8 @@
 - [Contributing](#contributing)
 - [Citation](#citation)
 - [License](#license)
+
+You can find the full **documentation** at [https://filipnaudot.github.io/lightbench](https://filipnaudot.github.io/lightbench/)
 
 ## Overview
 **lightbench** is designed to offer both interactive and automated benchmarking for large language models, enabling comprehensive evaluation of code generation and question answering capabilities.
