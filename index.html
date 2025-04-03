@@ -249,71 +249,11 @@
         <article role="main" id="furo-main-content">
           <section id="lightbench-documentation">
 <h1>lightbench documentation<a class="headerlink" href="#lightbench-documentation" title="Link to this heading">¶</a></h1>
+<p>Welcome to the <strong>lightbench</strong> documentation!</p>
+<p>This site contains developer and user documentation for the <cite>lightbench</cite> library.
+You can find the source code and contribute on GitHub:</p>
+<p>🔗 <a class="reference external" href="https://github.com/filipnaudot/lightbench/">lightbench GitHub repository</a></p>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="lightbench.html">lightbench</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lightbench.evaluators.html">lightbench.evaluators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lightbench.loaders.html">lightbench.loaders</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lightbench.metrics.html">lightbench.metrics</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.llm_judge.LLMJudge"><code class="docutils literal notranslate"><span class="pre">LLMJudge</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.llm_judge.LLMJudge.get_score"><code class="docutils literal notranslate"><span class="pre">LLMJudge.get_score()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.PowerUsage"><code class="docutils literal notranslate"><span class="pre">PowerUsage</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.PowerUsage.DEBUG"><code class="docutils literal notranslate"><span class="pre">PowerUsage.DEBUG</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.PowerUsage.handle"><code class="docutils literal notranslate"><span class="pre">PowerUsage.handle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.PowerUsage.power_samples"><code class="docutils literal notranslate"><span class="pre">PowerUsage.power_samples</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.PowerUsage.get_average"><code class="docutils literal notranslate"><span class="pre">PowerUsage.get_average()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.PowerUsage.kill"><code class="docutils literal notranslate"><span class="pre">PowerUsage.kill()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.PowerUsage.measure_power"><code class="docutils literal notranslate"><span class="pre">PowerUsage.measure_power()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.TTFT"><code class="docutils literal notranslate"><span class="pre">TTFT</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.TTFT.tokenizer"><code class="docutils literal notranslate"><span class="pre">TTFT.tokenizer</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.TTFT.streamer"><code class="docutils literal notranslate"><span class="pre">TTFT.streamer</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.TTFT.ttft"><code class="docutils literal notranslate"><span class="pre">TTFT.ttft</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.TTFT.measure_ttft"><code class="docutils literal notranslate"><span class="pre">TTFT.measure_ttft()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.VRAM_NVML"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.VRAM_NVML.device_handle"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML.device_handle</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.VRAM_NVML._max_memory"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML._max_memory</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.VRAM_NVML.measure_vram"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML.measure_vram()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.VRAM_NVML.reset"><code class="docutils literal notranslate"><span class="pre">VRAM_NVML.reset()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.VRAM_TORCH"><code class="docutils literal notranslate"><span class="pre">VRAM_TORCH</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.VRAM_TORCH.measure_vram"><code class="docutils literal notranslate"><span class="pre">VRAM_TORCH.measure_vram()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.metrics.VRAM_TORCH.reset"><code class="docutils literal notranslate"><span class="pre">VRAM_TORCH.reset()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="lightbench.utils.html">lightbench.utils</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors"><code class="docutils literal notranslate"><span class="pre">Colors</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors.BACKGROUND_GRAY"><code class="docutils literal notranslate"><span class="pre">Colors.BACKGROUND_GRAY</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors.BACKGROUND_LIGHT_BLUE"><code class="docutils literal notranslate"><span class="pre">Colors.BACKGROUND_LIGHT_BLUE</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors.CYAN_TEXT"><code class="docutils literal notranslate"><span class="pre">Colors.CYAN_TEXT</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors.GREEN_TEXT"><code class="docutils literal notranslate"><span class="pre">Colors.GREEN_TEXT</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors.RED_TEXT"><code class="docutils literal notranslate"><span class="pre">Colors.RED_TEXT</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors.RESET"><code class="docutils literal notranslate"><span class="pre">Colors.RESET</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors.WHITE_TEXT"><code class="docutils literal notranslate"><span class="pre">Colors.WHITE_TEXT</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Colors.YELLOW_TEXT"><code class="docutils literal notranslate"><span class="pre">Colors.YELLOW_TEXT</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Printer"><code class="docutils literal notranslate"><span class="pre">Printer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Printer.print_cyan"><code class="docutils literal notranslate"><span class="pre">Printer.print_cyan()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Printer.print_green"><code class="docutils literal notranslate"><span class="pre">Printer.print_green()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Printer.print_red"><code class="docutils literal notranslate"><span class="pre">Printer.print_red()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="lightbench.utils.html#lightbench.utils.Printer.print_yellow"><code class="docutils literal notranslate"><span class="pre">Printer.print_yellow()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
 </div>
 </section>
 
