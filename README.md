@@ -67,7 +67,18 @@ You can find the full **documentation** at [https://filipnaudot.github.io/lightb
 We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues, pull requests, and feature ideas.
 
 ## Citation
-**Paper.** If you refer to the research paper related to this project, please cite:
+**Repository.**
+If you use **lightbench** in your research, please cite the repository:
+```bibtex
+@misc{lightbench2025,
+  author    = {Filip Naudot},
+  title     = {lightbench},
+  year      = {2025},
+  howpublished = {\url{https://github.com/filipnaudot/lightbench}},
+}
+```
+
+**Paper.** If you refer to the research paper where this project was introduced, please cite:
 ```bibtex
 @inproceedings{naudot2025performance,
   author    = {Filip Naudot},
@@ -77,17 +88,6 @@ We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for 
   year      = {2025},
   publisher = {Umeå University, Sweden},
   note      = {Branch \texttt{conf-paper} used for paper results},
-}
-```
-
-**Repository.**
-If you use **lightbench** in your research, please cite the repository:
-```bibtex
-@misc{lightbench2025,
-  author    = {Filip Naudot},
-  title     = {lightbench},
-  year      = {2025},
-  howpublished = {\url{https://github.com/filipnaudot/lightbench}},
 }
 ```
 
