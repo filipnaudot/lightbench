@@ -18,7 +18,7 @@ As LLMs grow more capable and versatile, they're being applied across an increas
 wide range of domains and tasks. However, this versatility also makes it harder to determine which model is best suited
 for a specific use case, especially when niche capabilities or specialized data are involved.
 
-Not all LLMs perform equally well across all tasks. However, just because a model excels in one area doesn't mean it's 
+Not all LLMs perform equally well across all tasks. Just because a model excels in one area doesn't mean it's 
 the right choice for another. **lightbench** helps bridge that gap by providing a streamlined way to compare and evaluate 
 models in the context that actually matters: *your task*, *your data*, *your domain*.
 
