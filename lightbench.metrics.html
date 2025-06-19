@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=c516b45e" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=d0008d65" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,6 +102,9 @@ data-aria-dark="Switch to auto color mode">
 </ul>
 </li>
 <li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_TORCH"><code class="docutils literal notranslate"><span class="pre">VRAM_TORCH</span></code></a><ul>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_TORCH.DEBUG"><code class="docutils literal notranslate">DEBUG</span></code></a></li>
+<li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_TORCH.device"><code class="docutils literal notranslate">device</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate">device</span></code></a></li>
 <li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_TORCH.measure_vram"><code class="docutils literal notranslate">measure_vram()</span></code></a></li>
 <li><a class="reference internal" href="#lightbench.metrics.metrics.VRAM_TORCH.reset"><code class="docutils literal notranslate">reset()</span></code></a></li>
 </ul>
@@ -110,7 +113,8 @@ data-aria-dark="Switch to auto color mode">
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
-  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
   <div class="sy-breadcrumbs-inner flex items-center">
     <div class="md:hidden mr-3">
       <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
@@ -317,16 +321,43 @@ based on the elapsed time since the provided start_time.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_TORCH">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.metrics.metrics.</span></span><span class="sig-name descname"><span class="pre">VRAM_TORCH</span></span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.metrics.metrics.</span></span><span class="sig-name descname"><span class="pre">VRAM_TORCH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DEBUG</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to measure GPU VRAM usage using PyTorch’s CUDA utilities.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_TORCH.DEBUG">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH.DEBUG" title="Link to this definition">¶</a></dt>
+<dd><p>Flag to enable debug output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_TORCH.device">
+<span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH.device" title="Link to this definition">¶</a></dt>
+<dd><p>The device to monitor (‘cuda’ or ‘mps’).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.device</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cuda'</span></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_TORCH.measure_vram">
 <span class="sig-name descname"><span class="pre">measure_vram</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH.measure_vram" title="Link to this definition">¶</a></dt>
-<dd><p>Return the maximum GPU memory allocated (in gigabytes).</p>
+<dd><p>Measure the memory usage in gigabytes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Maximum allocated GPU memory (in GB) reported by PyTorch.</p>
+<dd class="field-odd"><p>Memory usage (in GB), either peak or current depending on backend.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
@@ -337,7 +368,7 @@ based on the elapsed time since the provided start_time.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lightbench.metrics.metrics.VRAM_TORCH.reset">
 <span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.metrics.metrics.VRAM_TORCH.reset" title="Link to this definition">¶</a></dt>
-<dd><p>Reset the peak GPU memory statistics.</p>
+<dd><p>Reset memory usage statistics based on the device type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -387,5 +418,5 @@ based on the elapsed time since the provided start_time.</p>
       <script src="_static/documentation_options.js?v=01f34227"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="_static/shibuya.js?v=e2230717"></script></body>
+      <script src="_static/shibuya.js?v=1d2088d1"></script></body>
 </html>
