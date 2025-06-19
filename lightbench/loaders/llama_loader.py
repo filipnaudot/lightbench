@@ -26,7 +26,9 @@ class LLamaModelLoader(LLMServiceLoader):
         self.model_name = model_name
         self.quantize = quantize
         self.tokenizer:AutoTokenizer = AutoTokenizer.from_pretrained(model_name, token=HUGGINGFACE_TOKEN)
-        self.device:str = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device:str = "cpu"
+        if torch.cuda.is_available():         self.device = "cuda"
+        if torch.backends.mps.is_available(): self.device = "mps"
 
         if self.quantize:
             self.model = self._load_quantized_model()
@@ -59,7 +61,7 @@ class LLamaModelLoader(LLMServiceLoader):
     
 
     def generate(self, prompt, max_tokens: int = 512):
-        vram_handler = VRAM_TORCH()
+        vram_handler = VRAM_TORCH(self.device)
         ttft_handler = TTFT(self.tokenizer)
         power_handler = PowerUsage()
         power_handler.measure_power()
@@ -102,4 +104,5 @@ class LLamaModelLoader(LLMServiceLoader):
         self.model = None
         gc.collect()
 
-        torch.cuda.empty_cache()
+        if self.device == "cuda": torch.cuda.empty_cache()
+        if self.device == "mps": torch.mps.empty_cache()

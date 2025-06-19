@@ -100,27 +100,48 @@ class VRAM_NVML:
 class VRAM_TORCH:
     """
     Class to measure GPU VRAM usage using PyTorch's CUDA utilities.
+
+    Attributes:
+        DEBUG (bool): Flag to enable debug output.
+        device (torch.device): The device to monitor ('cuda' or 'mps').
     """
-    def __init__(self) -> None:
+    device: str = "cuda"
+
+    def __init__(self, device: str, DEBUG:bool = False) -> None:
         """
         Initialize the VRAM_TORCH instance by resetting CUDA memory stats.
         """
+        self.DEBUG = DEBUG
+        self.device = torch.device(device)
         self.reset()
 
     def reset(self):
         """
-        Reset the peak GPU memory statistics.
+        Reset memory usage statistics based on the device type.
         """
-        torch.cuda.reset_peak_memory_stats()
+        if self.device == "cuda":
+            torch.cuda.reset_peak_memory_stats(self.device)
+            if self.DEBUG: print(f"Reset peak memory stats on {self.device}")
+        elif self.device == "mps":
+            pass # MPS backend does not support memory stat reset.
+        else:
+            if self.DEBUG: print(f"No memory stats to reset for device: {self.device}")
 
     def measure_vram(self):
         """
-        Return the maximum GPU memory allocated (in gigabytes).
+        Measure the memory usage in gigabytes.
 
         Returns:
-            float: Maximum allocated GPU memory (in GB) reported by PyTorch.
+            float: Memory usage (in GB), either peak or current depending on backend.
         """
-        return torch.cuda.max_memory_allocated() / (1024 ** 3)
+        if self.device == "mps":
+            # TODO: We need to be able to measure max here, similar to VRAM_NVML.
+            return torch.mps.current_allocated_memory() / (1024 ** 3)
+        elif self.device == "cuda":
+            return torch.cuda.max_memory_allocated(device=self.device) / (1024 ** 3)
+        else:
+            if self.DEBUG: print(f"Unknown device: {self.device}")
+            return torch.cuda.max_memory_allocated() / (1024 ** 3)
   
 
 class PowerUsage:
