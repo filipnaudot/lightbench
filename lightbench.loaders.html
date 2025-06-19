@@ -76,14 +76,6 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#module-lightbench.loaders.generation">Loaders</a><ul>
 <li><a class="reference internal" href="#lightbench.loaders.generation.Generation"><code class="docutils literal notranslate"><span class="pre">Generation</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.loaders.llama_loader.LLamaModelLoader"><code class="docutils literal notranslate"><span class="pre">LLamaModelLoader</span></code></a><ul>
-<li><a class="reference internal" href="#lightbench.loaders.llama_loader.LLamaModelLoader.cleanup"><code class="docutils literal notranslate">cleanup()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.loaders.llama_loader.LLamaModelLoader.generate"><code class="docutils literal notranslate">generate()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.loaders.llama_loader.LLamaModelLoader.is_local"><code class="docutils literal notranslate">is_local()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.loaders.llama_loader.LLamaModelLoader.is_quantized"><code class="docutils literal notranslate">is_quantized()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.loaders.llama_loader.LLamaModelLoader.name"><code class="docutils literal notranslate">name()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#lightbench.loaders.loader.LLMServiceLoader"><code class="docutils literal notranslate"><span class="pre">LLMServiceLoader</span></code></a><ul>
 <li><a class="reference internal" href="#lightbench.loaders.loader.LLMServiceLoader.cleanup"><code class="docutils literal notranslate">cleanup()</span></code></a></li>
 <li><a class="reference internal" href="#lightbench.loaders.loader.LLMServiceLoader.generate"><code class="docutils literal notranslate">generate()</span></code></a></li>
@@ -138,41 +130,6 @@ utilities for generation and general loading logic.</p>
 <dt class="sig sig-object py" id="lightbench.loaders.generation.Generation">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.loaders.generation.</span></span><span class="sig-name descname"><span class="pre">Generation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inferece_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peak_memory_usage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_power_usage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.loaders.generation.Generation" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-</dd></dl>
-
-<dl class="py class" id="module-lightbench.loaders.llama_loader">
-<dt class="sig sig-object py" id="lightbench.loaders.llama_loader.LLamaModelLoader">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.loaders.llama_loader.</span></span><span class="sig-name descname"><span class="pre">LLamaModelLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.loaders.llama_loader.LLamaModelLoader" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#lightbench.loaders.loader.LLMServiceLoader" title="lightbench.loaders.loader.LLMServiceLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLMServiceLoader</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.loaders.llama_loader.LLamaModelLoader.cleanup">
-<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.loaders.llama_loader.LLamaModelLoader.cleanup" title="Link to this definition">¶</a></dt>
-<dd><p>Perform cleanup of model resources and release memory.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.loaders.llama_loader.LLamaModelLoader.generate">
-<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">512</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.loaders.llama_loader.LLamaModelLoader.generate" title="Link to this definition">¶</a></dt>
-<dd><p>Generate text based on the given prompt and max tokens.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.loaders.llama_loader.LLamaModelLoader.is_local">
-<span class="sig-name descname"><span class="pre">is_local</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.loaders.llama_loader.LLamaModelLoader.is_local" title="Link to this definition">¶</a></dt>
-<dd><p>Returns true if using a local model, false if using an API.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.loaders.llama_loader.LLamaModelLoader.is_quantized">
-<span class="sig-name descname"><span class="pre">is_quantized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.loaders.llama_loader.LLamaModelLoader.is_quantized" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.loaders.llama_loader.LLamaModelLoader.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.loaders.llama_loader.LLamaModelLoader.name" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the name of the model.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class" id="module-lightbench.loaders.loader">
