@@ -99,7 +99,7 @@ class VRAM_NVML:
 
 class VRAM_TORCH:
     """
-    Class to measure GPU VRAM usage using PyTorch's CUDA utilities.
+    Class to measure GPU VRAM usage using PyTorch's utilities.
 
     Attributes:
         DEBUG (bool): Flag to enable debug output.
@@ -109,7 +109,7 @@ class VRAM_TORCH:
 
     def __init__(self, device: str, DEBUG:bool = False) -> None:
         """
-        Initialize the VRAM_TORCH instance by resetting CUDA memory stats.
+        Initialize the VRAM_TORCH instance by resetting memory stats.
         """
         self.DEBUG = DEBUG
         self.device = torch.device(device)
