@@ -7,7 +7,7 @@ import torch
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig, TextIteratorStreamer
 
 from lightbench.utils import Colors
-from lightbench.loaders.llama_loader import LLamaModelLoader
+from lightbench.loaders.huggingface_model_loader import HFModelLoader
 
 
 
@@ -52,7 +52,7 @@ def load_quantized_model(model_id):
 def main(stream: bool, quantize: bool):
 
     model_id = load_env_variables()
-    model_loader = LLamaModelLoader(model_id, quantize)
+    model_loader = HFModelLoader(model_id, quantize)
     stream_handler = ChatStreamHandler(model_loader.tokenizer)
 
 

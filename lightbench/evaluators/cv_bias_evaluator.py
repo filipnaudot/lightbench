@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from lightbench.utils import Printer
 from lightbench.evaluators.evaluator import Evaluator
 
-from lightbench.loaders.llama_loader import LLamaModelLoader
+from lightbench.loaders.huggingface_model_loader import HFModelLoader
 from lightbench.loaders.openai_loader import OpenAILoader
 from lightbench.loaders.generation import Generation
 

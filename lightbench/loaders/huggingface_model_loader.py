@@ -21,7 +21,7 @@ load_dotenv()
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
 
-class LLamaModelLoader(LLMServiceLoader):
+class HFModelLoader(LLMServiceLoader):
     def __init__(self, model_name: str, quantize: bool = False):
         self.model_name = model_name
         self.quantize = quantize
