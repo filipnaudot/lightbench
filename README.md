@@ -64,7 +64,7 @@ This installs **lightbench** and its dependencies in editable mode.
 
 **Step 3:**
 
-Configure Environment Variables. Create a `.env` file in the project's root directory. Include only the keys relevant to your use case as described below:
+Configure environment variables. Create a `.env` file in the project's root directory. Include only the keys relevant to your use case as described below:
 ```python
 # Required if using OpenAI models
 OPENAI_API_KEY=<your_openai_api_key_here>
