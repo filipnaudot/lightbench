@@ -1,11 +1,12 @@
 # API Documentation
 
 ## Getting Started
+> [!NOTE]
+> Before using the API, ensure you have installed lightbench according to the Installation instructions in the root directory.
 
-### Prerequisites
-Run the installation script in the root directory:
+To set up additional dependencies required specifically for the API, run:
 ```bash
-bash install_dependencies.sh
+pip install -e .[api]
 ```
 ---
 
