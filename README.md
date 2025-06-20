@@ -80,7 +80,7 @@ MODEL_NAME=<your_model_name_here>
 ```
 
 > [!NOTE]  
-> You onle need to include each key **if you intend to use the corresponding feature**.
+> You only need to include each key **if you intend to use the corresponding feature**.
 
 
 
