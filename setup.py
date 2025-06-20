@@ -13,9 +13,6 @@ setup(
         "openai",
         "mistralai",
         "pynvml",
-        "torch",
-        "torchaudio",
-        "torchvision",
     ],
     extras_require={
         "test":     ["pytest"],

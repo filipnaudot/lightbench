@@ -39,15 +39,50 @@ You can find the full **documentation** at [https://filipnaudot.github.io/lightb
 - **Extensible Architecture:** Easy integration of new evaluators and metrics.
 
 ## Installation
-1. **Dependencies:**  
-   Ensure you have Python 3.11+ installed.
-2. **Setup Environment:**  
-   Run the installation script:
-   ```bash
-   bash install_dependencies.sh
-   ```
-3. **Configure Environment:**  
-   Create a `.env` file with your `OPENAI_API_KEY`, `HUGGINGFACE_TOKEN`, and `MODEL_NAME`.
+Follow these steps to set up the `lightbench` benchmarking framework:
+
+**Step 1:** 
+
+Install [PyTorch](https://pytorch.org/get-started/locally/) and select the appropriate installation command for your system, paying attention to your GPU type and CUDA compatibility.
+
+Example (adjust according to your GPU):
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
+**Step 2:** 
+
+Install **lightbench**. Navigate to your cloned lightbench directory and run:
+```bash
+pip install -e .
+```
+This installs **lightbench** and its dependencies in editable mode.
+
+> [!NOTE]  
+> It is highly recommended to use a Python virtual environment (e.g., `venv` or `conda`) to manage dependencies and ensure a clean workspace.
+
+
+**Step 3:**
+
+Configure Environment Variables. Create a `.env` file in the project's root directory. Include only the keys relevant to your use case as described below:
+```python
+# Required if using OpenAI models
+OPENAI_API_KEY=<your_openai_api_key_here>
+
+# Required if using Mistral models
+MISTRAL_API_KEY=<your_mistral_api_key_here>
+
+# Required if downloading models from HuggingFace
+HUGGINGFACE_TOKEN=<your_huggingface_token_here>
+
+# Required if using the interactive chat interface (chat.py)
+MODEL_NAME=<your_model_name_here>
+```
+
+> [!NOTE]  
+> You onle need to include each key **if you intend to use the corresponding feature**.
+
+
 
 ## Usage
 - **Interactive Chat:**  
