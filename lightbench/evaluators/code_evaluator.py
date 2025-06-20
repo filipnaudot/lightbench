@@ -36,12 +36,14 @@ class CodeEvaluator(Evaluator):
     
     def _print_test_metrics(self, index, inference_time, ttft, memory_usage, power_usage):
         self._clear_last_row()
+        joule = power_usage * inference_time
         print(
             f"\r{index+1} "
             f"({inference_time:.2f}s, "
             f"TTFT: {ttft:.2f}s, "
             f"Memory: {memory_usage:.2f} GB, "
             f"Power: {int(power_usage)}W) ",
+            f"Joule: {joule:.2f}J) ",
             end=''
             )
 
