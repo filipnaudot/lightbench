@@ -12,6 +12,7 @@ setup(
         "nvidia-ml-py",
         "openai",
         "mistralai",
+        "anthropic",
         "pynvml",
     ],
     extras_require={
