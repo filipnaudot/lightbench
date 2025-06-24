@@ -113,7 +113,7 @@ If you use **lightbench** in your research, please cite the repository:
 }
 ```
 
-**Paper.** If you refer to the research paper where this project was introduced, please cite:
+**[Paper](https://www.diva-portal.org/smash/get/diva2:1939196/FULLTEXT01.pdf#page=29).** If you refer to the research paper where this project was introduced, please cite:
 ```bibtex
 @inproceedings{naudot2025performance,
   author    = {Filip Naudot},
