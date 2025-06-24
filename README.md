@@ -53,7 +53,3 @@ MODEL_NAME=
 `HUGGINGFACE_TOKEN`: Your Hugging Face token, used for all evaluations if you are not using your own model loader.
 
 `MODEL_NAME`: Specifies the model to use in the **chat.py** script for interactive chat.
-
-
-## Paper
-***LLMs and Efficiency: A Study in Computational Demands*** (Work in progress)
