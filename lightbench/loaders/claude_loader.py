@@ -36,7 +36,7 @@ class ClaudeLoader(LLMServiceLoader):
 
         return Generation(
             response=response.content[0].text,
-            inferece_time=(time.perf_counter() - start_time)
+            inference_time=(time.perf_counter() - start_time)
         )
 
     def is_local(self): return False

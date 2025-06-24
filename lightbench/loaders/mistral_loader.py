@@ -38,7 +38,7 @@ class MistralLoader(LLMServiceLoader):
             safe_prompt = safe_prompt
         )
         return Generation(response=response.choices[0].message.content,
-                          inferece_time=(time.perf_counter() - start_time))
+                          inference_time=(time.perf_counter() - start_time))
 
     def is_local(slef): return False
 

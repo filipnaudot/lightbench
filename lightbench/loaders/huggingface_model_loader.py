@@ -83,7 +83,7 @@ class HFModelLoader(LLMServiceLoader):
 
         response = generation[0]['generated_text'][-1]['content']
         return Generation(response=response,
-                          inferece_time=(time.perf_counter() - start_time),
+                          inference_time=(time.perf_counter() - start_time),
                           ttft=ttft_handler.ttft,
                           peak_memory_usage=vram_handler.measure_vram(),
                           avg_power_usage=power_handler.get_average())

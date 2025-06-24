@@ -123,7 +123,7 @@ class CodeEvaluator(Evaluator):
     def _generate_response(self, prompt) -> Generation:
         generation: Generation = self.model_loader.generate(prompt)
 
-        self.inference_time_list.append(generation.inferece_time)
+        self.inference_time_list.append(generation.inference_time)
         self.ttft_list.append(generation.ttft)
         self.memory_usage_list.append(generation.peak_memory_usage)
         self.power_usage_list.append(generation.avg_power_usage)
@@ -150,7 +150,7 @@ class CodeEvaluator(Evaluator):
         for index, (prompt, test) in enumerate(prompts):
             generation: Generation = self._generate_response(prompt)
             self._print_test_metrics(index,
-                                     generation.inferece_time,
+                                     generation.inference_time,
                                      generation.ttft,
                                      generation.peak_memory_usage,
                                      generation.avg_power_usage)
@@ -165,7 +165,7 @@ class CodeEvaluator(Evaluator):
                     self._print_test_status()
                     generation: Generation = self._generate_response(prompt)
                     self._print_test_metrics(index,
-                                            generation.inferece_time,
+                                            generation.inference_time,
                                             generation.ttft,
                                             generation.peak_memory_usage,
                                             generation.avg_power_usage)
