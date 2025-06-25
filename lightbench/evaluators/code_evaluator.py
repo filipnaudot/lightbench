@@ -209,6 +209,15 @@ class CodeEvaluator(Evaluator):
         else:
             passed_percentage = 0.0
 
+             # Calculate average Joules per inference
+    if len(self.power_usage_list) == len(self.inference_time_list) and len(self.power_usage_list) > 0:
+        joules_list = [
+            p * t for p, t in zip(self.power_usage_list, self.inference_time_list)
+        ]
+        avg_joules = sum(joules_list) / len(joules_list)
+    else:
+        avg_joules = 0.0   
+
         
         summary = {
             "passed_tests": self.passed_test,
@@ -223,6 +232,7 @@ class CodeEvaluator(Evaluator):
                 "quantize": str(self.model_loader.quantize),
                 "average_mem_usage_GB": round(avg_memory_usage, 2),
                 "average_power_usage_W": round(avg_power_usage, 2),
+                  "average_energy_usage_J": round(avg_joules, 2),  # Added Joules
             })
 
         print(json.dumps(summary, indent=4))
