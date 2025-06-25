@@ -24,14 +24,27 @@ class ClaudeLoader(LLMServiceLoader):
         self.client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
         self.model_name = model_name
 
+    def _separate_system_message(self, prompt):
+        system_message = ""
+        new_prompt = []
+        for msg in prompt:
+            if msg["role"] == "system":
+                system_message = msg["content"]
+            else:
+                new_prompt.append(msg)
+        return new_prompt, system_message
+
     def generate(self, prompt, max_tokens: int = 512) -> Generation:
         start_time = time.perf_counter()
+
+        # Separate system message from prompt
+        prompt, system_message = self._separate_system_message(prompt)
 
         response = self.client.messages.create(
             model=self.model_name,
             max_tokens=max_tokens,
             messages=prompt,
-            system="",  # optional: system message here
+            system=system_message,  #  system message handled correctly
         )
 
         return Generation(
