@@ -2,67 +2,117 @@
 Module for measuring time to first token (TTFT), GPU memory usage, and GPU power usage.
 
 This module provides the following classes:
-    - TTFT: Measures the time to first token during text generation.
-    - VRAM_NVML: Monitors GPU VRAM usage using NVIDIA’s NVML library.
+    - GenerationMetrics: Monitors TTFT, GPU VRAM, and power usage.
     - VRAM_TORCH: Measures GPU VRAM usage using PyTorch CUDA utilities.
     - PowerUsage: Measures and tracks GPU power usage via NVML.
-
-Dependencies:
-    - time: For performance timing.
-    - torch: For GPU memory measurements.
-    - pynvml: For interfacing with NVIDIA Management Library.
-    - transformers: For text streaming with transformer models.
 """
 
 import time
+from typing import List, Optional
 
 import torch
+
 import pynvml
 from pynvml import NVMLError, NVMLError_NotSupported
 
-from transformers import TextIteratorStreamer
+from transformers.generation.streamers import BaseStreamer
 
 
-class TTFT:
+
+
+class GenerationMetrics(BaseStreamer):
+    """Collects several generation-time metrics in a single place.
+
+    It measures:
+        • **TTFT** (Time-To-First-Token)
+        • **Average VRAM usage** (either via NVML or PyTorch utilities)
+        • **Average GPU power consumption** (via NVML)
+
+    Sampling happens *during* token streaming.  Set ``sample_every`` to decide how often the
+    measurements are taken, defaults to ``sample_every = 5``.
+
+    Parameters
+    ----------
+    tokenizer : transformers.PreTrainedTokenizerBase
+        Tokenizer used by your model; required to build a ``TextIteratorStreamer``.
+    sample_every : int, default = 5
+        Frequency (in tokens) at which VRAM & power are sampled.  Must be > 0.
+    device : str, default = "cuda"
+        Device string, NVIDIA ``torch``and Apple ``Metal (mps)``are supported.
+    use_nvml : bool, default = False
+        If ``True`` we try to use NVML for VRAM.  If NVML is unavailable or
+        ``use_nvml=False`` we fall back to the PyTorch memory utilities.
+    DEBUG : bool, default = False
+        Emit verbose messages when something goes wrong.
     """
-    Class for measuring Time To First Token (TTFT) during text generation.
 
-    Attributes:
-        tokenizer: A tokenizer instance used for encoding text.
-        streamer: A TextIteratorStreamer instance that streams text output.
-        ttft: Float representing the time (in seconds) from start to first token.
-    """
-
-    def __init__(self, tokenizer) -> None:
-        """
-        Initialize the TTFT instance with a tokenizer.
-
-        Args:
-            tokenizer: A tokenizer instance from a transformer model.
-        """
+    def __init__(
+        self,
+        tokenizer,
+        sample_every: int = 1,
+        device: str = "cuda",
+        DEBUG: bool = False,
+    ) -> None:
+        if sample_every < 1: raise ValueError("sample_every must be >= 1")
+        self.sample_every = sample_every
+        self._token_count = 0
+        self._vram_samples: List[float] = []
+        self._power_samples: List[float] = []
+        self._start_time: Optional[float] = None
+        self._ttft: Optional[float] = None
+        # Tokenizer
         self.tokenizer = tokenizer
-        self.streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True, timeout=None)
-        self.ttft = 0.00
-    
-    def measure_ttft(self, start_time):
-        """
-        Measure the time to first token (TTFT) for a text generation stream.
+        # VRAM
+        self.vram_monitor  = VRAM_TORCH(device)
+        # Power
+        self.power_monitor = PowerUsage()
 
-        This function iterates over the text streamer and sets the TTFT value
-        based on the elapsed time since the provided start_time.
+    @property
+    def ttft(self) -> Optional[float]: return self._ttft
 
-        Args:
-            start_time: The starting time (from time.perf_counter()) when generation began.
-        """
-        # IMPORTANT: streamers 'timeout' has to be None for this to work
-        for _ in self.streamer:
-            self.ttft = time.perf_counter() - start_time
-            break
+    @property
+    def avg_vram(self) -> float: return sum(self._vram_samples)/len(self._vram_samples) if self._vram_samples else 0.0
+
+    @property
+    def avg_power(self) -> float: return sum(self._power_samples)/len(self._power_samples) if self._power_samples else 0.0
+
+    def put(self, value):
+        self._token_count += 1
+        if self._start_time is None: raise RuntimeError("Call .set_start_time() before generate()")
+        if self._token_count == 1: self._ttft = time.perf_counter() - self._start_time
+
+        if self._token_count % self.sample_every == 0:
+            if torch.cuda.is_available(): torch.cuda.synchronize()
+            elif torch.backends.mps.is_available(): torch.mps.synchronize()
+
+            self._vram_samples.append(self.vram_monitor.measure_vram())
+            self._power_samples.append(self.power_monitor.measure_power())
+
+    def end(self):
+        if self._token_count % self.sample_every:
+            self._vram_samples.append(self.vram_monitor.measure_vram())
+            self._power_samples.append(self.power_monitor.measure_power())
+        self.power_monitor.kill()
+
+    def set_start_time(self): self._start_time = time.perf_counter()
+
+    def reset(self):
+        self._token_count = 0
+        self._vram_samples.clear()
+        self._power_samples.clear()
+        self._ttft = None
+        self.vram_monitor.reset()
+        self.power_monitor.power_samples = []
 
 
+import warnings
+# Deprecated
 class VRAM_NVML:
     """
     Class to monitor GPU VRAM usage using NVIDIA's NVML.
+
+    .. deprecated:: 0.1.0
+       The VRAM_NVML class is deprecated. Use VRAM_TORCH instead.
 
     Attributes:
         device_handle: NVML handle for the first GPU device.
@@ -72,6 +122,11 @@ class VRAM_NVML:
         """
         Initialize NVML and retrieve a handle for the first GPU device.
         """
+        warnings.warn(
+            "VRAM_NVML is deprecated. Use VRAM_TORCH instead",
+            category=DeprecationWarning,
+            stacklevel=2
+        )
         pynvml.nvmlInit()
         self.device_handle = pynvml.nvmlDeviceGetHandleByIndex(0)
         self._max_memory = 0
@@ -113,35 +168,32 @@ class VRAM_TORCH:
         """
         self.DEBUG = DEBUG
         self.device = torch.device(device)
+        self.device_type = self.device.type
         self.reset()
 
     def reset(self):
         """
         Reset memory usage statistics based on the device type.
         """
-        if self.device == "cuda":
+        if self.device_type == "cuda":
             torch.cuda.reset_peak_memory_stats(self.device)
             if self.DEBUG: print(f"Reset peak memory stats on {self.device}")
-        elif self.device == "mps":
+        elif self.device_type == "mps":
             pass # MPS backend does not support memory stat reset.
         else:
             if self.DEBUG: print(f"No memory stats to reset for device: {self.device}")
 
-    def measure_vram(self):
+    def measure_vram(self) -> float:
         """
         Measure the memory usage in gigabytes.
 
         Returns:
             float: Memory usage (in GB), either peak or current depending on backend.
         """
-        if self.device == "mps":
-            # TODO: We need to be able to measure max here, similar to VRAM_NVML.
-            return torch.mps.current_allocated_memory() / (1024 ** 3)
-        elif self.device == "cuda":
-            return torch.cuda.max_memory_allocated(device=self.device) / (1024 ** 3)
-        else:
-            if self.DEBUG: print(f"Unknown device: {self.device}")
-            return torch.cuda.max_memory_allocated() / (1024 ** 3)
+        if self.device_type == "cuda": return torch.cuda.max_memory_allocated(self.device) / (1024 ** 3)
+        if self.device_type == "mps": return torch.mps.current_allocated_memory() / (1024 ** 3)
+        if self.DEBUG: print(f"[VRAM_TORCH] unknown backend '{self.device_type}', returning 0.0")
+        return 0.0
   
 
 class PowerUsage:
