@@ -1,7 +1,7 @@
 <div align='center'>
     <picture>
-        <source media="(prefers-color-scheme: light)" srcset="/readme_assets/lightbench_logo_lightmode.png">
-        <img alt="lighbench logo" src="/readme_assets/lightbench_logo_darkmode.png" width="50%" height="50%">
+        <source media="(prefers-color-scheme: light)" srcset="docs/readme_assets/lightbench_logo_lightmode.png">
+        <img alt="lighbench logo" src="docs/readme_assets/lightbench_logo_darkmode.png" width="50%" height="50%">
     </picture>
     <p>
         <img src="https://img.shields.io/badge/docs-lightbench-blue?logo=read-the-docs">
@@ -19,14 +19,16 @@
 
 
 ## Table of Contents
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [Citation](#citation)
-- [License](#license)
+- [lightbench](#lightbench)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Key Features](#key-features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Project Structure](#project-structure)
+  - [Contributing](#contributing)
+  - [Citation](#citation)
+  - [License](#license)
 
 You can find the full **documentation** at [https://filipnaudot.github.io/lightbench](https://filipnaudot.github.io/lightbench/)
 
@@ -87,7 +89,7 @@ MODEL_NAME=<your_model_name_here>
 ## Usage
 - **Interactive Chat:**  
   Run `chat.py` to start the chat interface. This will use the model specified by `MODEL_NAME` in the `.env` file. Below is an example of a chat using [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct), running on a GTX 1080 TI.
-  ![Demo of Terminal Chat Interface](./readme_assets/demo.gif)
+  ![Demo of Terminal Chat Interface](./docs/readme_assets/demo.gif)
 
 - **Automated Evaluations:**  
   See examples in [`examples.ipynb`](examples.ipynb).
