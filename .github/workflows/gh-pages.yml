@@ -29,7 +29,7 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install .
-        pip install sphinx furo shibuya
+        pip install sphinx myst-parser sphinx-book-theme sphinx-design
 
     - name: Build docs
       working-directory: docs

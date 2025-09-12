@@ -14,17 +14,12 @@ of data and tasks, such as code evaluation and text evaluation.
 Evaluators
 ----------
 
-.. automodule:: lightbench.evaluators.code_evaluator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: lightbench.evaluators.cv_bias_evaluator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 .. automodule:: lightbench.evaluators.evaluator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   
+.. automodule:: lightbench.evaluators.code_evaluator
    :members:
    :undoc-members:
    :show-inheritance:

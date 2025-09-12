@@ -24,14 +24,12 @@ models in the context that actually matters: *your task*, *your data*, *your dom
 
 
 
-
-
-
-
-
-
 .. toctree::
-   :maxdepth: 2
+   :caption: Contents
    :hidden:
+   :maxdepth: 2
 
-   lightbench Modules <lightbench>
+   lightbench.loaders
+   lightbench.metrics
+   lightbench.utils
+   lightbench.evaluators
