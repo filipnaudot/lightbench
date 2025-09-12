@@ -74,27 +74,7 @@ data-aria-dark="Switch to auto color mode">
       <i class="i-lucide close"></i>
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
-<li><a class="reference internal" href="#module-lightbench.evaluators.code_evaluator">Evaluators</a><ul>
-<li><a class="reference internal" href="#lightbench.evaluators.code_evaluator.CodeEvaluator"><code class="docutils literal notranslate"><span class="pre">CodeEvaluator</span></code></a><ul>
-<li><a class="reference internal" href="#lightbench.evaluators.code_evaluator.CodeEvaluator.cleanup"><code class="docutils literal notranslate">cleanup()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.evaluators.code_evaluator.CodeEvaluator.print_summary"><code class="docutils literal notranslate">print_summary()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.evaluators.code_evaluator.CodeEvaluator.run"><code class="docutils literal notranslate">run()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#lightbench.evaluators.evaluator.Evaluator"><code class="docutils literal notranslate"><span class="pre">Evaluator</span></code></a><ul>
-<li><a class="reference internal" href="#lightbench.evaluators.evaluator.Evaluator.cleanup"><code class="docutils literal notranslate">cleanup()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.evaluators.evaluator.Evaluator.print_summary"><code class="docutils literal notranslate">print_summary()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.evaluators.evaluator.Evaluator.run"><code class="docutils literal notranslate">run()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#lightbench.evaluators.text_evaluator.TextEvaluator"><code class="docutils literal notranslate"><span class="pre">TextEvaluator</span></code></a><ul>
-<li><a class="reference internal" href="#lightbench.evaluators.text_evaluator.TextEvaluator.cleanup"><code class="docutils literal notranslate">cleanup()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.evaluators.text_evaluator.TextEvaluator.print_summary"><code class="docutils literal notranslate">print_summary()</span></code></a></li>
-<li><a class="reference internal" href="#lightbench.evaluators.text_evaluator.TextEvaluator.run"><code class="docutils literal notranslate">run()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#evaluators">Evaluators</a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -133,71 +113,8 @@ data-aria-dark="Switch to auto color mode">
 <h1>lightbench.evaluators<a class="headerlink" href="#lightbench-evaluators" title="Link to this heading">¶</a></h1>
 <p>The <strong>evaluators</strong> package contains various evaluators for different types
 of data and tasks, such as code evaluation and text evaluation.</p>
-<section id="module-lightbench.evaluators.code_evaluator">
-<span id="evaluators"></span><span id="module-lightbench.evaluators"></span><h2>Evaluators<a class="headerlink" href="#module-lightbench.evaluators.code_evaluator" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="lightbench.evaluators.code_evaluator.CodeEvaluator">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.evaluators.code_evaluator.</span></span><span class="sig-name descname"><span class="pre">CodeEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="lightbench.loaders.html#lightbench.loaders.loader.LLMServiceLoader" title="lightbench.loaders.loader.LLMServiceLoader"><span class="pre">LLMServiceLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_test_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">few_shot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.code_evaluator.CodeEvaluator" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#lightbench.evaluators.evaluator.Evaluator" title="lightbench.evaluators.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.code_evaluator.CodeEvaluator.cleanup">
-<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.code_evaluator.CodeEvaluator.cleanup" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.code_evaluator.CodeEvaluator.print_summary">
-<span class="sig-name descname"><span class="pre">print_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.code_evaluator.CodeEvaluator.print_summary" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.code_evaluator.CodeEvaluator.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.code_evaluator.CodeEvaluator.run" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class" id="module-lightbench.evaluators.evaluator">
-<dt class="sig sig-object py" id="lightbench.evaluators.evaluator.Evaluator">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.evaluators.evaluator.</span></span><span class="sig-name descname"><span class="pre">Evaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.evaluator.Evaluator" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.evaluator.Evaluator.cleanup">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.evaluator.Evaluator.cleanup" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.evaluator.Evaluator.print_summary">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">print_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.evaluator.Evaluator.print_summary" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.evaluator.Evaluator.run">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.evaluator.Evaluator.run" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class" id="module-lightbench.evaluators.text_evaluator">
-<dt class="sig sig-object py" id="lightbench.evaluators.text_evaluator.TextEvaluator">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lightbench.evaluators.text_evaluator.</span></span><span class="sig-name descname"><span class="pre">TextEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="lightbench.loaders.html#lightbench.loaders.loader.LLMServiceLoader" title="lightbench.loaders.loader.LLMServiceLoader"><span class="pre">LLMServiceLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">judge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="lightbench.metrics.html#lightbench.metrics.llm_judge.LLMJudge" title="lightbench.metrics.llm_judge.LLMJudge"><span class="pre">LLMJudge</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_test_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.text_evaluator.TextEvaluator" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#lightbench.evaluators.evaluator.Evaluator" title="lightbench.evaluators.evaluator.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.text_evaluator.TextEvaluator.cleanup">
-<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.text_evaluator.TextEvaluator.cleanup" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.text_evaluator.TextEvaluator.print_summary">
-<span class="sig-name descname"><span class="pre">print_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.text_evaluator.TextEvaluator.print_summary" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="lightbench.evaluators.text_evaluator.TextEvaluator.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lightbench.evaluators.text_evaluator.TextEvaluator.run" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="evaluators">
+<h2>Evaluators<a class="headerlink" href="#evaluators" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 
