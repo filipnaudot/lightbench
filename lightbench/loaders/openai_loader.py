@@ -9,19 +9,20 @@ from lightbench.utils import Printer
 from lightbench.loaders.loader import LLMServiceLoader
 from lightbench.loaders.generation import Generation
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    Printer.print_red(
-        "You need to specify your OpenAI API key in a '.env' file in the root directory to use the OpenAILoader.\n"
-        "Make sure it is defined as: OPENAI_API_KEY=your_key_here"
-    )
-    exit(1) 
 
 
 class OpenAILoader(LLMServiceLoader):
     def __init__(self, model_name: str):
-        self.client = OpenAI(api_key=OPENAI_API_KEY)
+        load_dotenv()
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            Printer.print_red(
+                "You need to specify your OpenAI API key in a '.env' file in the root directory to use the OpenAILoader.\n"
+                "Make sure it is defined as: OPENAI_API_KEY=your_key_here"
+            )
+            raise RuntimeError("Missing OpenAI API key")
+
+        self.client = OpenAI(api_key=api_key)
         self.model_name = model_name
 
 

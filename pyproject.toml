@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest"]
+dev = ["pytest", "sphinx", "myst-parser", "sphinx-book-theme", "sphinx-design"]
 api = ["fastapi", "uvicorn"]
 notebook = ["ipywidgets"]
 

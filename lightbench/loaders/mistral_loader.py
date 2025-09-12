@@ -9,19 +9,19 @@ from lightbench.utils import Printer
 from lightbench.loaders.loader import LLMServiceLoader
 from lightbench.loaders.generation import Generation
 
-load_dotenv()
-MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
-if not MISTRAL_API_KEY:
-    Printer.print_red(
-        "You need to specify your Mistral API key in a '.env' file in the root directory to use the MistralLoader.\n"
-        "Make sure it is defined as: MISTRAL_API_KEY=your_key_here"
-    )
-    exit(1) 
-
 
 class MistralLoader(LLMServiceLoader):
     def __init__(self, model_name: str):
-        self.mistral_client = Mistral(api_key=MISTRAL_API_KEY)
+        load_dotenv()
+        api_key = os.getenv("MISTRAL_API_KEY")
+        if not api_key:
+            Printer.print_red(
+                "You need to specify your Mistral API key in a '.env' file in the root directory to use the MistralLoader.\n"
+                "Make sure it is defined as: MISTRAL_API_KEY=your_key_here"
+            )
+            raise RuntimeError("Missing Mistral API key")
+            
+        self.mistral_client = Mistral(api_key=api_key)
         self.model_name = model_name
 
     def generate(self,

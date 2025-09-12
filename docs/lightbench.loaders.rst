@@ -16,17 +16,18 @@ utilities for generation and general loading logic.
 Loaders
 ----------
 
+
 .. automodule:: lightbench.loaders.generation
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lightbench.loaders.llama_loader
+.. automodule:: lightbench.loaders.loader
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lightbench.loaders.loader
+.. automodule:: lightbench.loaders.huggingface_model_loader
    :members:
    :undoc-members:
    :show-inheritance:

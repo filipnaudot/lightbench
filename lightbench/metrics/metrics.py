@@ -38,7 +38,7 @@ class GenerationMetrics(BaseStreamer):
     sample_every : int, default = 5
         Frequency (in tokens) at which VRAM & power are sampled.  Must be > 0.
     device : str, default = "cuda"
-        Device string, NVIDIA ``torch``and Apple ``Metal (mps)``are supported.
+        Device string, NVIDIA ``torch`` and Apple ``Metal (mps)`` are supported.
     use_nvml : bool, default = False
         If ``True`` we try to use NVML for VRAM.  If NVML is unavailable or
         ``use_nvml=False`` we fall back to the PyTorch memory utilities.
@@ -160,7 +160,6 @@ class VRAM_TORCH:
         DEBUG (bool): Flag to enable debug output.
         device (torch.device): The device to monitor ('cuda' or 'mps').
     """
-    device: str = "cuda"
 
     def __init__(self, device: str, DEBUG:bool = False) -> None:
         """
