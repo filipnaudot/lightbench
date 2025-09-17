@@ -30,7 +30,7 @@
   - [Citation](#citation)
   - [License](#license)
 
-You can find the full **documentation** at [https://filipnaudot.github.io/lightbench](https://filipnaudot.github.io/lightbench/)
+The full [**documentation**](https://filipnaudot.github.io/lightbench/) is available [**here**](https://filipnaudot.github.io/lightbench/).
 
 ## Overview
 **lightbench** is designed to offer both interactive and automated benchmarking for large language models, enabling comprehensive evaluation of code generation and question answering capabilities.
